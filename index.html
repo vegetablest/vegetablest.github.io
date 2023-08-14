@@ -228,6 +228,132 @@
         
           <i class="index-pin iconfont icon-top" title="Pin on top"></i>
         
+        <a href="/2023/08/12/%E7%94%A8jdk17%E7%9A%84%E9%A3%8E%E6%A0%BC%E4%B9%A6%E5%86%99%E4%BB%A3%E7%A0%81/" target="_self">
+          用Jdk17的风格书写代码
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/08/12/%E7%94%A8jdk17%E7%9A%84%E9%A3%8E%E6%A0%BC%E4%B9%A6%E5%86%99%E4%BB%A3%E7%A0%81/" target="_self">
+        <div>
+          我想通过Java不同版本的编程特性去解决一下开发中会遇到的问题，帮我们快速理解和学习新特性，后续我会不断的收集和补充这些问题，目前比较可惜的是我还没有对不同的jdk版本的单元测试代码进行banchmark…… Q1:在给定的字符串中取出出现次数Top3的字母，但是可能会出现并列情况,，所以我们的结果应该是[k&#x3D;[char1,chat2,……],……] A:jdk8之前  12345678
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-08-12 10:57" pubdate>
+              2023-08-12
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/java/" class="category-chain-item">java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E7%BB%83%E4%B9%A0/">#练习</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+          <i class="index-pin iconfont icon-top" title="Pin on top"></i>
+        
+        <a href="/2023/08/13/%E4%BB%A3%E7%A0%81%E7%BE%8E%E5%AD%A6/" target="_self">
+          代码美学
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/08/13/%E4%BB%A3%E7%A0%81%E7%BE%8E%E5%AD%A6/" target="_self">
+        <div>
+          最近我写的代码被同事code review时一直被吐槽，而我发现确实存在各种各样的问题，所以我打算把这些都给记录下来，以后不断改进 1.正确的命名 有一句老话说的好：计算机科学有两件难事，一是缓存失效，二是取名。我对第二点深有体会，所以我记录了一下取名的一些规范   尽量避免使用单个字母去给变量命名，这回使变量失去相关信息12345678910public sealed class People
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-08-13 10:48" pubdate>
+              2023-08-13
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Others/" class="category-chain-item">Others</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A7%84%E8%8C%83/">#规范</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+          <i class="index-pin iconfont icon-top" title="Pin on top"></i>
+        
         <a href="/2022/08/03/Maven%E7%9F%A5%E8%AF%86%E8%AE%B0%E5%BD%95/" target="_self">
           Maven知识记录
         </a>
@@ -289,6 +415,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2023/08/12/%E5%A5%BD%E7%94%A8%E4%BD%86%E4%B8%8D%E4%B8%BA%E4%BA%BA%E7%9F%A5%E7%9A%84API/" target="_self">
+          好用但不为人知的API
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/08/12/%E5%A5%BD%E7%94%A8%E4%BD%86%E4%B8%8D%E4%B8%BA%E4%BA%BA%E7%9F%A5%E7%9A%84API/" target="_self">
+        <div>
+          1.Collection.of()这些集合的of方法让我们代码变得简单，当我们只想展示我们想要展示的列表或者东西不是很多的场景中使用，这些api都是不可变的 123456@Testpublic void testCollectionOf() &#123;    List&lt;String&gt; names = List.of(&quot;zs&quot;, &quot;ls&quot;, &q
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-08-12 22:22" pubdate>
+              2023-08-12
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/java/" class="category-chain-item">java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E7%AC%94%E8%AE%B0/">#笔记</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2023/08/11/jdk8%E4%B9%8B%E5%90%8E%E5%90%84%E7%89%88%E6%9C%AC%E5%B8%B8%E7%94%A8%E6%96%B0%E7%89%B9%E6%80%A7/" target="_self">
           Jdk8之后各版本常用新特性
         </a>
@@ -297,7 +484,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/08/11/jdk8%E4%B9%8B%E5%90%8E%E5%90%84%E7%89%88%E6%9C%AC%E5%B8%B8%E7%94%A8%E6%96%B0%E7%89%B9%E6%80%A7/" target="_self">
         <div>
-          varswitchtext blockinstanceofrecode
+          JDK10 var 关键字 REP-286 增强 Java 语言，将类型推断扩展到带有初始值设定项的局部变量声明。我们寻求通过减少与编写 Java 代码相关的仪式改善开发人员的体验，同时通过允许开发人员省略通常不必要的局部变量类型的清单声明来保持 Java 对静态类型安全的承诺​查询详情  局部变量推断类型，作用在局部代码块中，通过编译器的类型推断来避免频繁的定义一些类型，其目标是作用在局部变量、
         </div>
       </a>
 
@@ -405,6 +592,67 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/%E7%AC%94%E8%AE%B0/">#笔记</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2021/02/19/%E6%97%A5%E5%BF%97%E8%A7%84%E8%8C%83/" target="_self">
+          日志规范
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/02/19/%E6%97%A5%E5%BF%97%E8%A7%84%E8%8C%83/" target="_self">
+        <div>
+          1.基本原则 不影响系统正常运行 不允许出现安全问题 日志可供开发人员定位问题的真正原因 日志可供监控系统自动监控与分析  2.日志级别 ERROR：影响系统正常运行，影响业务正常运行，明确需要人工干预。比如：数据库不可用，关键业务流程中断等等 WARN：发生这个级别问题时，处理过程可以继续，但必须对这个问题给予额外关注。这个问题又可以细分成两种情况：一种是存在严重的问题但有应急措施（比如数据库不
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-02-19 21:38" pubdate>
+              2021-02-19
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%BF%90%E7%BB%B4/" class="category-chain-item">运维</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A7%84%E8%8C%83/">#规范</a>
             
           </div>
         
