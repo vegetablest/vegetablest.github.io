@@ -181,6 +181,31 @@
   
   
   <entry>
+    <title>git使用</title>
+    <link href="/2022/03/21/git%E4%BD%BF%E7%94%A8/"/>
+    <url>/2022/03/21/git%E4%BD%BF%E7%94%A8/</url>
+    
+    <content type="html"><![CDATA[<blockquote><p>Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小到大的项目。Git 易于学习，占用空间小，性能快如闪电。它凭借廉价的本地分支、方便的暂存区域和多个工作流程等功能。</p></blockquote><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>略</p><h3 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h3><p><a href="https://learngitbranching.js.org/?locale=zh_CN">这里练习</a></p><h3 id="git-commit规范"><a href="#git-commit规范" class="headerlink" title="git commit规范"></a>git commit规范</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 类型之后的！是可选的，有它意味着是人们需要关注的重点变更</span><br>&lt;类型&gt;[!][可选的作用域]: &lt;描述&gt;<br></code></pre></td></tr></table></figure><p><strong>所有的 type 类型如下：</strong><br>feat： 新增 feature<br>fix: 修复 bug<br>docs: 仅仅修改了文档，比如 README, CHANGELOG, CONTRIBUTE等等<br>style: 仅仅修改了空格、格式缩进、逗号等等，不改变代码逻辑<br>refactor: 代码重构，没有加新功能或者修复 bug<br>perf: 优化相关，比如提升性能、体验<br>test: 测试用例，包括单元测试、集成测试等<br>chore: 改变构建流程、或者增加依赖库、工具等<br>revert: 回滚到上一个版本<br><strong>Examples:</strong></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">feat(api)!: add send email<br></code></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">chore: modify dockerfile basice image version<br></code></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docs(api): update api docs<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>工具</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>规范</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>日志规范</title>
     <link href="/2021/02/19/%E6%97%A5%E5%BF%97%E8%A7%84%E8%8C%83/"/>
     <url>/2021/02/19/%E6%97%A5%E5%BF%97%E8%A7%84%E8%8C%83/</url>
