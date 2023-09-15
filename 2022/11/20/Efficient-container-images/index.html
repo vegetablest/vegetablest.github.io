@@ -16,22 +16,22 @@
   <meta name="author" content="af su">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小到大的项目。Git 易于学习，占用空间小，性能快如闪电。它凭借廉价的本地分支、方便的暂存区域和多个工作流程等功能。  安装略 命令这里练习 git commit规范12# 类型之后的！是可选的，有它意味着是人们需要关注的重点变更&lt;类型&gt;[!][可选的作用域]: &lt;描述&gt; 所有的 type 类型如下：feat：">
+    <meta name="description" content="容器 ——云原生的基石  一个SpringBoot应用的上云其实很简单，我们只需要将打出来的jar包放入一个带有jdk环境的Docker基础镜像中运行起来就行。但是如果我们深入思考真的是这样吗？简单的复制jar包在容器中运行总是会比运行解压之后的文件多一些的开销，而在容器化环境中，这种开销是很明显的。另一个问题是，把应用程序的代码和它的所有依赖放在Docker镜像的一个层中并不是优雅的做法，由于">
 <meta property="og:type" content="article">
-<meta property="og:title" content="git使用">
-<meta property="og:url" content="https://vegetablest.github.io/2022/03/21/git%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:title" content="Springboot应用镜像构建">
+<meta property="og:url" content="https://vegetablest.github.io/2022/11/20/Efficient-container-images/index.html">
 <meta property="og:site_name" content="vegetablest">
-<meta property="og:description" content="Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小到大的项目。Git 易于学习，占用空间小，性能快如闪电。它凭借廉价的本地分支、方便的暂存区域和多个工作流程等功能。  安装略 命令这里练习 git commit规范12# 类型之后的！是可选的，有它意味着是人们需要关注的重点变更&lt;类型&gt;[!][可选的作用域]: &lt;描述&gt; 所有的 type 类型如下：feat：">
+<meta property="og:description" content="容器 ——云原生的基石  一个SpringBoot应用的上云其实很简单，我们只需要将打出来的jar包放入一个带有jdk环境的Docker基础镜像中运行起来就行。但是如果我们深入思考真的是这样吗？简单的复制jar包在容器中运行总是会比运行解压之后的文件多一些的开销，而在容器化环境中，这种开销是很明显的。另一个问题是，把应用程序的代码和它的所有依赖放在Docker镜像的一个层中并不是优雅的做法，由于">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-03-21T06:17:48.000Z">
-<meta property="article:modified_time" content="2023-08-21T06:34:35.292Z">
+<meta property="article:published_time" content="2022-11-20T12:11:08.000Z">
+<meta property="article:modified_time" content="2023-09-15T08:51:48.822Z">
 <meta property="article:author" content="af su">
-<meta property="article:tag" content="规范">
+<meta property="article:tag" content="cloud native">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>git使用 - vegetablest</title>
+  <title>Springboot应用镜像构建 - vegetablest</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -197,7 +197,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="git使用"></span>
+            <span id="subtitle" data-typed-text="Springboot应用镜像构建"></span>
           
         </div>
 
@@ -208,8 +208,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-03-21 14:17" pubdate>
-          2022年3月21日 下午
+        <time datetime="2022-11-20 20:11" pubdate>
+          2022年11月20日 晚上
         </time>
       </span>
     
@@ -220,7 +220,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          486 字
+          1.9k 字
         
       </span>
     
@@ -231,7 +231,7 @@
         
         
         
-          2 分钟
+          5 分钟
         
       </span>
     
@@ -268,21 +268,36 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">git使用</h1>
+            <h1 id="seo-header">Springboot应用镜像构建</h1>
             
             
               <div class="markdown-body">
                 
                 <blockquote>
-<p>Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小到大的项目。Git 易于学习，占用空间小，性能快如闪电。它凭借廉价的本地分支、方便的暂存区域和多个工作流程等功能。</p>
+<p>容器 ——云原生的基石</p>
 </blockquote>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>略</p>
-<h3 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h3><p><a target="_blank" rel="noopener" href="https://learngitbranching.js.org/?locale=zh_CN">这里练习</a></p>
-<h3 id="git-commit规范"><a href="#git-commit规范" class="headerlink" title="git commit规范"></a>git commit规范</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 类型之后的！是可选的，有它意味着是人们需要关注的重点变更</span><br>&lt;类型&gt;[!][可选的作用域]: &lt;描述&gt;<br></code></pre></td></tr></table></figure>
-<p><strong>所有的 type 类型如下：</strong><br>feat： 新增 feature<br>fix: 修复 bug<br>docs: 仅仅修改了文档，比如 README, CHANGELOG, CONTRIBUTE等等<br>style: 仅仅修改了空格、格式缩进、逗号等等，不改变代码逻辑<br>refactor: 代码重构，没有加新功能或者修复 bug<br>perf: 优化相关，比如提升性能、体验<br>test: 测试用例，包括单元测试、集成测试等<br>chore: 改变构建流程、或者增加依赖库、工具等<br>revert: 回滚到上一个版本<br><strong>Examples:</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">feat(api)!: add send email<br></code></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">chore: modify dockerfile basice image version<br></code></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docs(api): update api docs<br></code></pre></td></tr></table></figure>
+<p>一个SpringBoot应用的上云其实很简单，我们只需要将打出来的jar包放入一个带有jdk环境的Docker基础镜像中运行起来就行。但是如果我们深入思考真的是这样吗？简单的复制jar包在容器中运行总是会比运行解压之后的文件多一些的开销，而在容器化环境中，这种开销是很明显的。另一个问题是，把应用程序的代码和它的所有依赖放在Docker镜像的一个层中并不是优雅的做法，由于重新编译代码的频率一定比我们升级所使用的依赖的频率要高很多，所以通常情况下在DockerFile中把事情分开一些比较好。 如果把jar文件放在应用类之前的那一层，Docker通常只需要改变最底层，就可以从其缓存中获取其他文件（充分利用unionFS）。</p>
+<p>基于上述前提，我们想要做一个高效的Springboot DockerFile只需要两步：</p>
+<ol>
+<li>分层的jar包</li>
+<li>编写Dockerfiles</li>
+</ol>
+<h3 id="分层的jar包"><a href="#分层的jar包" class="headerlink" title="分层的jar包"></a>分层的jar包</h3><p>为了更容易创建优化的Docker镜像，SpringBoot支持在jar中添加一个层索引文件，它提供了一个层的列表以及jar中应包含的部分，索引中的层列表是根据层应该被添加到Docker&#x2F;OCI镜像中的顺序排列的：</p>
+<ul>
+<li>dependencies (用于常规发布的依赖)</li>
+<li>spring-boot-loader (针对 org&#x2F;springframework&#x2F;boot&#x2F;loader 下的所有内容)</li>
+<li>snapshot-dependencies (用于snapshot的依赖)</li>
+<li>application (用于application 类和资源)</li>
+</ul>
+<p>这种分层设计是为了根据代码在应用程序构建之间变化的可能性来分离代码，dependencies代码在不同的构建之间变化的可能性较小，所以它被放在自己的层中，以允许工具从缓存中重新使用这些层。application在不同的构建之间更有可能发生变化，所以它被隔离在一个单独的层中。</p>
+<h3 id="编写Dockerfiles"><a href="#编写Dockerfiles" class="headerlink" title="编写Dockerfiles"></a>编写Dockerfiles</h3><p>虽然在Dockerfile中只需几行就可以将SpringBoot的jar转换成docker镜像，但我们将使用分层功能可以创建一个优化的docker镜像。当我们创建一个包含分层文件的jar时，spring-boot-jarmode-layertools jar将被作为依赖关系添加到我们的jar中。有了classpath上的这个jar，我们可以在一个特殊的模式下启动你的应用程序，这个模式允许bootstrap代码运行与我们的应用程序完全不同的东西，例如提取层里的东西。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">启动jar</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">java -Djarmode=layertools -jar my-app.jar</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">解压jar并分类依赖（构建分层Docker镜像的核心工具）</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">java -Djarmode=layertools -jar my-app.jar extract</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs DOCKERFILE"><span class="hljs-keyword">FROM</span> eclipse-temurin:<span class="hljs-number">17</span>-jre as builder<br><span class="hljs-keyword">WORKDIR</span><span class="language-bash"> application</span><br><span class="hljs-keyword">ARG</span> JAR_FILE=target/*.jar<br><span class="hljs-keyword">COPY</span><span class="language-bash"> <span class="hljs-variable">$&#123;JAR_FILE&#125;</span> application.jar</span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> java -Djarmode=layertools -jar application.jar extract</span><br><br><span class="hljs-keyword">FROM</span> eclipse-temurin:<span class="hljs-number">17</span>-jre<br><span class="hljs-keyword">WORKDIR</span><span class="language-bash"> application</span><br><span class="hljs-keyword">COPY</span><span class="language-bash"> --from=builder application/dependencies/ ./</span><br><span class="hljs-keyword">COPY</span><span class="language-bash"> --from=builder application/spring-boot-loader/ ./</span><br><span class="hljs-keyword">COPY</span><span class="language-bash"> --from=builder application/snapshot-dependencies/ ./</span><br><span class="hljs-keyword">COPY</span><span class="language-bash"> --from=builder application/application/ ./</span><br><span class="hljs-keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="hljs-string">&quot;java&quot;</span>, <span class="hljs-string">&quot;org.springframework.boot.loader.JarLauncher&quot;</span>]</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-comment"># 可以指定参数构建</span><br>docker <span class="hljs-keyword">build </span>--<span class="hljs-keyword">build-arg </span><span class="hljs-keyword">JAR_FILE=path/to/myapp.jar </span>.<br></code></pre></td></tr></table></figure>
+
+<p>这是一个多阶段的docker文件，构建者阶段提取了以后需要的目录，每个 COPY 命令都与jarmode提取的层有关。<br>当然，不使用jarmode也可以编写Dockerfile， 我们可以使用unzip和mv的一些组合来把东西移到正确的层，但jarmode简化了这一点。</p>
+
                 
               </div>
             
@@ -300,7 +315,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E5%B7%A5%E5%85%B7/" class="category-chain-item">工具</a>
+  <a href="/categories/spring/" class="category-chain-item">spring</a>
   
   
 
@@ -315,7 +330,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E8%A7%84%E8%8C%83/" class="print-no-link">#规范</a>
+        <a href="/tags/cloud-native/" class="print-no-link">#cloud native</a>
       
     </div>
   
@@ -327,8 +342,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>git使用</div>
-      <div>https://vegetablest.github.io/2022/03/21/git使用/</div>
+      <div>Springboot应用镜像构建</div>
+      <div>https://vegetablest.github.io/2022/11/20/Efficient-container-images/</div>
     </div>
     <div class="license-meta">
       
@@ -340,7 +355,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年3月21日</div>
+          <div>2022年11月20日</div>
         </div>
       
       
@@ -372,9 +387,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/08/03/Maven%E7%9F%A5%E8%AF%86%E8%AE%B0%E5%BD%95/" title="Maven知识记录">
+                      <a href="/2023/08/12/%E7%94%A8jdk17%E7%9A%84%E9%A3%8E%E6%A0%BC%E4%B9%A6%E5%86%99%E4%BB%A3%E7%A0%81/" title="用Jdk17的风格书写代码">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Maven知识记录</span>
+                        <span class="hidden-mobile">用Jdk17的风格书写代码</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -382,8 +397,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/02/19/%E6%97%A5%E5%BF%97%E8%A7%84%E8%8C%83/" title="日志规范">
-                        <span class="hidden-mobile">日志规范</span>
+                      <a href="/2022/09/17/python%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/" title="Python魔法方法">
+                        <span class="hidden-mobile">Python魔法方法</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
