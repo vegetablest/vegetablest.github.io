@@ -16,22 +16,21 @@
   <meta name="author" content="af su">
   <meta name="keywords" content="">
   
-    <meta name="description" content="vegetablest的个人博客">
+    <meta name="description" content="Python 是一种典型的动态脚本语言，不仅支持动态类型，其对象模型本身也是动态的。Python 中的类是可变的，方法不过是类的一个属性，因此我们可以在运行时修改它们的行为。这种技巧被称为 Monkey Patching（猴子补丁），这个名字可能源于 “游击补丁”（Guerrilla patch），意思是“偷偷地修改代码”。 什么是 Monkey Patching？简而言之，Monkey Patc">
 <meta property="og:type" content="article">
-<meta property="og:title" content="自定义springboot-starter">
-<meta property="og:url" content="https://vegetablest.github.io/2022/08/08/%E8%87%AA%E5%AE%9A%E4%B9%89springboot-starter/index.html">
+<meta property="og:title" content="Python Monkey Patching">
+<meta property="og:url" content="https://vegetablest.github.io/2025/05/31/python-monkey-patch/index.html">
 <meta property="og:site_name" content="vegetablest">
-<meta property="og:description" content="vegetablest的个人博客">
+<meta property="og:description" content="Python 是一种典型的动态脚本语言，不仅支持动态类型，其对象模型本身也是动态的。Python 中的类是可变的，方法不过是类的一个属性，因此我们可以在运行时修改它们的行为。这种技巧被称为 Monkey Patching（猴子补丁），这个名字可能源于 “游击补丁”（Guerrilla patch），意思是“偷偷地修改代码”。 什么是 Monkey Patching？简而言之，Monkey Patc">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-08-08T13:27:20.000Z">
-<meta property="article:modified_time" content="2023-09-09T05:15:45.107Z">
+<meta property="article:published_time" content="2025-05-31T12:54:47.000Z">
+<meta property="article:modified_time" content="2025-05-29T06:04:57.946Z">
 <meta property="article:author" content="af su">
-<meta property="article:tag" content="笔记">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>自定义springboot-starter - vegetablest</title>
+  <title>Python Monkey Patching - vegetablest</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -237,7 +236,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="自定义springboot-starter"></span>
+            <span id="subtitle" data-typed-text="Python Monkey Patching"></span>
           
         </div>
 
@@ -248,8 +247,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-08-08 21:27" pubdate>
-          2022年8月8日 晚上
+        <time datetime="2025-05-31 20:54" pubdate>
+          2025年5月31日 晚上
         </time>
       </span>
     
@@ -260,7 +259,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          0 字
+          2.4k 字
         
       </span>
     
@@ -271,7 +270,7 @@
         
         
         
-          1 分钟
+          6 分钟
         
       </span>
     
@@ -308,12 +307,61 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">自定义springboot-starter</h1>
+            <h1 id="seo-header">Python Monkey Patching</h1>
             
             
               <div class="markdown-body">
                 
-                
+                <p>Python 是一种典型的动态脚本语言，不仅支持动态类型，其对象模型本身也是动态的。Python 中的类是可变的，方法不过是类的一个属性，因此我们可以在运行时修改它们的行为。这种技巧被称为 <strong>Monkey Patching</strong>（猴子补丁），这个名字可能源于 “游击补丁”（Guerrilla patch），意思是“偷偷地修改代码”。</p>
+<h2 id="什么是-Monkey-Patching？"><a href="#什么是-Monkey-Patching？" class="headerlink" title="什么是 Monkey Patching？"></a>什么是 Monkey Patching？</h2><p>简而言之，Monkey Patching 就是在运行时动态地替换对象的属性。在 Python 中，这通常表现为对函数、类或模块的动态修改。</p>
+<p>我们来看一个简单的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># monkey.py</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Me</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">who_am_i</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;I am a Monkey&quot;</span>)<br></code></pre></td></tr></table></figure>
+
+<p>假设你不喜欢这个输出，因为你是个人类，于是你打算使用 Monkey Patch 改变它：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> monkey<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">i_am_human</span>(<span class="hljs-params">self</span>):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;I am human&quot;</span>)<br><br><span class="hljs-comment"># 替换 who_am_i 方法</span><br>monkey.Me.who_am_i = i_am_human<br><br>obj = monkey.Me()<br>obj.who_am_i()  <span class="hljs-comment"># 输出：I am human</span><br></code></pre></td></tr></table></figure>
+
+<p>输出结果变成了“我是人类”，修改生效了，这就是 Monkey Patching 的效果。</p>
+<h2 id="可变与不可变类型的关系"><a href="#可变与不可变类型的关系" class="headerlink" title="可变与不可变类型的关系"></a>可变与不可变类型的关系</h2><p>理解 Monkey Patching，需要先搞清楚 Python 中 <strong>可变类型</strong> 与 <strong>不可变类型</strong> 的区别。</p>
+<p>在 Python 中，变量更像是“标签”而不是“盒子”，它指向实际的对象。对于自定义对象（即类的实例），它们是<strong>可变</strong>的，因此可以直接修改其属性而不必新建对象。</p>
+<p>一般来说：</p>
+<ul>
+<li><strong>不可变类型</strong>：<code>float</code>、<code>decimal</code>、<code>complex</code>、<code>bool</code>、<code>str</code>、<code>tuple</code>、<code>range</code>、<code>frozenset</code>、<code>bytes</code> 等。</li>
+<li><strong>可变类型</strong>：<code>list</code>、<code>dict</code>、<code>set</code>、<code>bytearray</code>、自定义类等。</li>
+</ul>
+<p>Monkey Patching 正是利用了这种可变性。</p>
+<p>前面的例子是修补了一个类的方法，因此该类的所有实例都会受到影响。但我们也可以<strong>只修补某个特定实例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> types<br><span class="hljs-keyword">import</span> monkey<br><br>monkey1 = monkey.Me()<br>monkey2 = monkey.Me()<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">i_am_human</span>(<span class="hljs-params">self</span>):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;I am human&quot;</span>)<br><br>monkey2.who_am_i = types.MethodType(i_am_human, monkey2)<br><br>monkey1.who_am_i()  <span class="hljs-comment"># 输出：I am a Monkey</span><br>monkey2.who_am_i()  <span class="hljs-comment"># 输出：I am human</span><br></code></pre></td></tr></table></figure>
+
+<p>通过 <code>types.MethodType</code>，我们仅改变了 <code>monkey2</code> 的方法实现。</p>
+<h2 id="修补模块"><a href="#修补模块" class="headerlink" title="修补模块"></a>修补模块</h2><p>Monkey Patching 不仅限于类或实例，也可以应用到模块级别：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># whoami.py</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">who_am_i</span>(<span class="hljs-params">monkey_type</span>):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;I am a <span class="hljs-subst">&#123;monkey_type&#125;</span>&quot;</span>)<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># human.py</span><br><span class="hljs-keyword">import</span> whoami<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">who_am_i</span>():<br>    whoami.who_am_i(<span class="hljs-string">&quot;Human&quot;</span>)<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># monkey.py</span><br><span class="hljs-keyword">import</span> whoami<br><span class="hljs-keyword">import</span> human<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">i_am_monkey</span>(<span class="hljs-params">monkey_type</span>):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;I am a <span class="hljs-subst">&#123;monkey_type&#125;</span>&quot;</span>)<br><br>whoami.who_am_i = i_am_monkey  <span class="hljs-comment"># 修补模块函数</span><br><br>human.who_am_i()  <span class="hljs-comment"># 输出：I am a Monkey</span><br></code></pre></td></tr></table></figure>
+
+<p>猴子通过猴子补丁“攻击”了人类模块。</p>
+<h2 id="警告-⚠️"><a href="#警告-⚠️" class="headerlink" title="警告 ⚠️"></a>警告 ⚠️</h2><p>Monkey Patching 虽然强大，但也有风险。</p>
+<p>它通常用于处理遗留系统或第三方库，我们希望在<strong>不直接修改源码</strong>的前提下改变行为，从而适配某些环境或修复 bug。但这种修改方式会让代码的行为变得难以追踪，容易造成混淆和维护困难。</p>
+<p>比如，在上面的例子中，谁是猴子谁是人类就不那么容易分辨了。</p>
+<p>因此，<strong>在可行的情况下，优先选择扩展库的公共接口</strong>，而不是直接打补丁。</p>
+<h2 id="测试中的应用"><a href="#测试中的应用" class="headerlink" title="测试中的应用"></a>测试中的应用</h2><p>在测试中，Monkey Patching 是非常实用的。它可以临时替换依赖项，比如模拟一个方法的返回值，用于验证系统行为，而无需实际调用外部服务。</p>
+<h2 id="推荐库：Gorilla-🦍"><a href="#推荐库：Gorilla-🦍" class="headerlink" title="推荐库：Gorilla 🦍"></a>推荐库：Gorilla 🦍</h2><p>我推荐使用 <a target="_blank" rel="noopener" href="https://gorilla.readthedocs.io/en/latest/">Gorilla</a>，它让 Monkey Patching 变得更优雅、模块化，尤其是在需要对大量类或方法打补丁的场景中。</p>
+<p>下面是一个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> gorilla<br><span class="hljs-keyword">import</span> destination<br><br><span class="hljs-meta">@gorilla.patches(<span class="hljs-params">destination.Class</span>)</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyClass</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">method</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Hello&quot;</span>)<br>    <br><span class="hljs-meta">    @classmethod</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">class_method</span>(<span class="hljs-params">cls</span>):<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;world!&quot;</span>)<br></code></pre></td></tr></table></figure>
+
+<p>上面的代码只是定义了补丁，尚未应用。我们可以使用 <code>gorilla.find_patches</code> 扫描并批量应用补丁：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> gorilla<br><span class="hljs-keyword">import</span> mypackage<br><br>patches = gorilla.find_patches([mypackage])<br><span class="hljs-keyword">for</span> patch <span class="hljs-keyword">in</span> patches:<br>    gorilla.apply(patch)<br></code></pre></td></tr></table></figure>
+
+<p>这种方式不仅直观、干净，还大大提升了可维护性。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Monkey Patching 是 Python 提供的一种强大但危险的能力。合理使用它，可以提升灵活性和适配能力，尤其适用于：</p>
+<ul>
+<li>遗留代码的兼容性调整</li>
+<li>单元测试中的方法模拟</li>
+<li>第三方库的临时修复</li>
+</ul>
+<p>但请始终保持谨慎，确保补丁行为明确、文档清晰，并在可能的情况下考虑更安全的替代方式。</p>
+
                 
               </div>
             
@@ -321,34 +369,6 @@
             <div>
               <div class="post-metas my-3">
   
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/spring/" class="category-chain-item">spring</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-    </div>
-  
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/%E7%AC%94%E8%AE%B0/" class="print-no-link">#笔记</a>
-      
-    </div>
   
 </div>
 
@@ -358,8 +378,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>自定义springboot-starter</div>
-      <div>https://vegetablest.github.io/2022/08/08/自定义springboot-starter/</div>
+      <div>Python Monkey Patching</div>
+      <div>https://vegetablest.github.io/2025/05/31/python-monkey-patch/</div>
     </div>
     <div class="license-meta">
       
@@ -371,7 +391,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年8月8日</div>
+          <div>2025年5月31日</div>
         </div>
       
       
@@ -398,6 +418,23 @@
 
 
 
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/05/29/python%E5%85%83%E7%B1%BB/" title="python元类">
+                        <span class="hidden-mobile">python元类</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
               
             </div>
 
