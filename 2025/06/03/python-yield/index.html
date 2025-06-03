@@ -16,24 +16,24 @@
   <meta name="author" content="af su">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小到大的项目。Git 易于学习，占用空间小，性能快如闪电。它凭借廉价的本地分支、方便的暂存区域和多个工作流程等功能。  1.安装略 2.命令去这里练习！！！如果想要熟练掌握工作用的git flow使用，务必熟练掌握merge、rebase(rebase -i)、reset、cherry-pick、checkout(switch)、ta">
+    <meta name="description" content="要理解yield的作用，我们首先需要理解 可迭代对象（iterable） 和 迭代器（iterator） 的概念。千万不要混淆可迭代对象、迭代器和生成器！ 可迭代对象与迭代器创建一个列表后，我们可以逐个读取它的元素，这个过程称为迭代： 123456&gt;&gt;&gt; a &#x3D; [0, 1, 2]&gt;&gt;&gt; for i in a:...     print(i)012  所有可以用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Git使用">
-<meta property="og:url" content="https://vegetablest.github.io/2021/03/21/git%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:title" content="Python 中 yield 关键字起什么作用？">
+<meta property="og:url" content="https://vegetablest.github.io/2025/06/03/python-yield/index.html">
 <meta property="og:site_name" content="vegetablest">
-<meta property="og:description" content="Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小到大的项目。Git 易于学习，占用空间小，性能快如闪电。它凭借廉价的本地分支、方便的暂存区域和多个工作流程等功能。  1.安装略 2.命令去这里练习！！！如果想要熟练掌握工作用的git flow使用，务必熟练掌握merge、rebase(rebase -i)、reset、cherry-pick、checkout(switch)、ta">
+<meta property="og:description" content="要理解yield的作用，我们首先需要理解 可迭代对象（iterable） 和 迭代器（iterator） 的概念。千万不要混淆可迭代对象、迭代器和生成器！ 可迭代对象与迭代器创建一个列表后，我们可以逐个读取它的元素，这个过程称为迭代： 123456&gt;&gt;&gt; a &#x3D; [0, 1, 2]&gt;&gt;&gt; for i in a:...     print(i)012  所有可以用">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-03-21T06:17:48.000Z">
-<meta property="article:modified_time" content="2023-08-23T01:47:39.940Z">
+<meta property="article:published_time" content="2025-06-03T07:27:56.000Z">
+<meta property="article:modified_time" content="2025-06-03T08:19:09.495Z">
 <meta property="article:author" content="af su">
-<meta property="article:tag" content="规范">
+<meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Git使用 - vegetablest</title>
+  <title>Python 中 yield 关键字起什么作用？ - vegetablest</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +199,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Git使用"></span>
+            <span id="subtitle" data-typed-text="Python 中 yield 关键字起什么作用？"></span>
           
         </div>
 
@@ -210,8 +210,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2021-03-21 14:17" pubdate>
-          2021年3月21日 下午
+        <time datetime="2025-06-03 15:27" pubdate>
+          2025年6月3日 下午
         </time>
       </span>
     
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.9k 字
+          1.5k 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          8 分钟
+          4 分钟
         
       </span>
     
@@ -270,102 +270,39 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Git使用</h1>
+            <h1 id="seo-header">Python 中 yield 关键字起什么作用？</h1>
             
             
               <div class="markdown-body">
                 
-                <blockquote>
-<p>Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小到大的项目。Git 易于学习，占用空间小，性能快如闪电。它凭借廉价的本地分支、方便的暂存区域和多个工作流程等功能。</p>
-</blockquote>
-<h3 id="1-安装"><a href="#1-安装" class="headerlink" title="1.安装"></a>1.安装</h3><p>略</p>
-<h3 id="2-命令"><a href="#2-命令" class="headerlink" title="2.命令"></a>2.命令</h3><p><a target="_blank" rel="noopener" href="https://learngitbranching.js.org/?locale=zh_CN">去这里练习！！！</a><br>如果想要熟练掌握工作用的git flow使用，务必熟练掌握<code>merge</code>、<code>rebase(rebase -i)</code>、<code>reset</code>、<code>cherry-pick</code>、<code>checkout(switch)</code>、<code>tag</code>、<code>stash</code>的使用！！！</p>
-<h3 id="3-git-工作流程"><a href="#3-git-工作流程" class="headerlink" title="3.git 工作流程"></a>3.git 工作流程</h3><h4 id="3-1-Git-Flow"><a href="#3-1-Git-Flow" class="headerlink" title="3.1 Git Flow"></a>3.1 Git Flow</h4><ul>
-<li>主干分支</li>
-<li>稳定分支</li>
-<li>开发分支</li>
-<li>补丁分支</li>
-<li>修改分支</li>
+                <p>要理解<code>yield</code>的作用，我们首先需要理解 <strong>可迭代对象（iterable）</strong> 和 <strong>迭代器（iterator）</strong> 的概念。千万不要混淆可迭代对象、迭代器和生成器！</p>
+<h2 id="可迭代对象与迭代器"><a href="#可迭代对象与迭代器" class="headerlink" title="可迭代对象与迭代器"></a>可迭代对象与迭代器</h2><p>创建一个列表后，我们可以逐个读取它的元素，这个过程称为<strong>迭代</strong>：</p>
+<figure class="highlight pycon"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs pycon"><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">a = [<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>]</span><br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> a:</span><br><span class="hljs-meta prompt_">...</span> <span class="language-python">    <span class="hljs-built_in">print</span>(i)</span><br>0<br>1<br>2<br></code></pre></td></tr></table></figure>
+
+<p>所有可以用于 <code>for...in...</code> 循环的对象，都是<strong>可迭代对象</strong>，比如列表、字符串、文件等。这些对象内部实现了 <code>__iter__()</code> 方法。</p>
+<p>然而，可迭代对象通常会把所有元素一次性加载进内存。当数据量很大时，这可能会带来性能问题。</p>
+<h2 id="什么是生成器？"><a href="#什么是生成器？" class="headerlink" title="什么是生成器？"></a>什么是生成器？</h2><p><strong>生成器（Generator）</strong>是一种特殊的迭代器，它不会一次性生成所有元素，而是<strong>在需要时动态生成值</strong>。生成器是“惰性”的，占用内存更少。</p>
+<p>将列表推导式的方括号 <code>[]</code> 换成圆括号 <code>()</code>，就能得到一个生成器：</p>
+<figure class="highlight pycon"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs pycon"><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">a = [i <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">3</span>)]</span><br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="hljs-built_in">type</span>(a)</span><br>&lt;class &#x27;list&#x27;&gt;<br><br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">b = (i <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">3</span>))</span><br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="hljs-built_in">type</span>(b)</span><br>&lt;class &#x27;generator&#x27;&gt;<br></code></pre></td></tr></table></figure>
+
+<h2 id="yield：创建生成器的关键字"><a href="#yield：创建生成器的关键字" class="headerlink" title="yield：创建生成器的关键字"></a>yield：创建生成器的关键字</h2><p>使用 <code>yield</code> 可以将普通函数变成一个生成器函数。每次执行到 <code>yield</code>，函数会返回一个值，并<strong>暂停执行</strong>，保留当前状态。下一次调用 <code>next()</code> 时，会从上一次暂停的地方继续执行。</p>
+<p>来看一个简单示例：</p>
+<figure class="highlight pycon"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs pycon"><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">create_generator</span>():</span><br><span class="hljs-meta prompt_">...</span> <span class="language-python">    mylist = <span class="hljs-built_in">range</span>(<span class="hljs-number">3</span>)</span><br><span class="hljs-meta prompt_">...</span> <span class="language-python">    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> mylist:</span><br><span class="hljs-meta prompt_">...</span> <span class="language-python">        <span class="hljs-keyword">yield</span> i * i</span><br><br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">mygenerator = create_generator()</span><br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="hljs-built_in">print</span>(mygenerator)</span><br>&lt;generator object create_generator at 0x...&gt;<br><br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> mygenerator:</span><br><span class="hljs-meta prompt_">...</span> <span class="language-python">    <span class="hljs-built_in">print</span>(i)</span><br>0<br>1<br>4<br></code></pre></td></tr></table></figure>
+
+<p>你会发现，调用函数时并不会立即执行它，而是返回一个生成器对象。只有在遍历该生成器或调用 <code>next()</code> 时，函数才会逐步运行。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">some_function</span>():<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">4</span>):<br>        <span class="hljs-keyword">yield</span> i<br><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> some_function():<br>    <span class="hljs-built_in">print</span>(i)<br></code></pre></td></tr></table></figure>
+
+<h2 id="和手动实现迭代器对比"><a href="#和手动实现迭代器对比" class="headerlink" title="和手动实现迭代器对比"></a>和手动实现迭代器对比</h2><p>不使用 <code>yield</code>，我们也可以手动实现一个迭代器类，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyIterator</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        self.count = -<span class="hljs-number">1</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__iter__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">return</span> self<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__next__</span>(<span class="hljs-params">self</span>):<br>        self.count += <span class="hljs-number">1</span><br>        <span class="hljs-keyword">if</span> self.count &lt; <span class="hljs-number">4</span>:<br>            <span class="hljs-keyword">return</span> self.count<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">raise</span> StopIteration<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">some_func</span>():<br>    <span class="hljs-keyword">return</span> MyIterator()<br><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> some_func():<br>    <span class="hljs-built_in">print</span>(i)<br><br></code></pre></td></tr></table></figure>
+
+<p>相比之下，使用 <code>yield</code> 可以让我们省去写 <code>__iter__</code> 和 <code>__next__</code> 方法的麻烦，快速构建一个可迭代的对象。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><code>yield</code> 是构建生成器的关键字。</li>
+<li>生成器通过 <code>yield</code> 动态生成值，具有惰性、节省内存的特点。</li>
+<li>相比手动实现迭代器，<code>yield</code> 提供了一种更简单、直观的方式。</li>
 </ul>
+<p>当你想逐步生成数据，或者处理大量数据时，优先考虑使用生成器和 <code>yield</code>，它们会让你的代码更高效、更优雅。</p>
 
-
-<h4 id="3-2-GitHub-Flow"><a href="#3-2-GitHub-Flow" class="headerlink" title="3.2 GitHub Flow"></a>3.2 GitHub Flow</h4><ul>
-<li>创建分支</li>
-<li>添加提交</li>
-<li>提交 PR 请求</li>
-<li>讨论和评估代码</li>
-<li>部署检测</li>
-<li>合并代码</li>
-</ul>
-<h4 id="3-3-GitLab-Flow"><a href="#3-3-GitLab-Flow" class="headerlink" title="3.3 GitLab Flow"></a>3.3 GitLab Flow</h4><ul>
-<li>带生产分支</li>
-<li>带环境分支</li>
-<li>带发布分支</li>
-</ul>
-
-
-<h3 id="4-git-commit规范"><a href="#4-git-commit规范" class="headerlink" title="4.git commit规范"></a>4.git commit规范</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 类型之后的！是可选的，有它意味着是人们需要关注的重点变更</span><br>&lt;类型&gt;[!][可选的作用域]: &lt;描述&gt;<br></code></pre></td></tr></table></figure>
-<h4 id="4-1-所有的-type-类型如下："><a href="#4-1-所有的-type-类型如下：" class="headerlink" title="4.1 所有的 type 类型如下：**"></a>4.1 所有的 type 类型如下：**</h4><p>feat： 新增 feature<br>fix: 修复 bug<br>docs: 仅仅修改了文档，比如 README, CHANGELOG, CONTRIBUTE等等<br>style: 仅仅修改了空格、格式缩进、逗号等等，不改变代码逻辑<br>refactor: 代码重构，没有加新功能或者修复 bug<br>perf: 优化相关，比如提升性能、体验<br>test: 测试用例，包括单元测试、集成测试等<br>chore: 改变构建流程、或者增加依赖库、工具等<br>revert: 回滚到上一个版本</p>
-<h4 id="4-2-Examples"><a href="#4-2-Examples" class="headerlink" title="4.2 Examples"></a>4.2 Examples</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">feat(api)!: add send email<br></code></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">chore: modify dockerfile basice image version<br></code></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docs(api): update api docs<br></code></pre></td></tr></table></figure>
-<h3 id="5-git-tips"><a href="#5-git-tips" class="headerlink" title="5.git tips"></a>5.git tips</h3><h4 id="5-1-git-log"><a href="#5-1-git-log" class="headerlink" title="5.1 git log"></a>5.1 git log</h4><p>对于码农来说git log是自然熟悉不过的了，但是每天面对git log原始的日志格式，你是不是觉得很烦人啊，因为上面的给的信息太不人性化了，而且我相信大部分的码农的提交日志都是随心所欲的</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">log</span> --graph --pretty=format:<span class="hljs-string">&#x27;%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset&#x27;</span> --abbrev-commit<br></code></pre></td></tr></table></figure>
-<p>不过很显然上面的命令有点长，没关系，我们可以给上面的命令添加一个别名，的日志的时候只需要输入git lg就可以，git lg -p 可查看详细信息。如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git config --global alias.lg <span class="hljs-string">&quot;log --color --graph --pretty=format:&#x27;%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset&#x27; --abbrev-commit&quot;</span><br></code></pre></td></tr></table></figure>
-<h4 id="5-2-rebase-i"><a href="#5-2-rebase-i" class="headerlink" title="5.2 rebase -i"></a>5.2 rebase -i</h4><p>日常开发中，我们为了完成一个功能或者特性，提交很多个 commit 记录。但是在最后，提交 PR 之前，一般情况下，我们是应该整理下这些提交记录的。有些 commit 需要合并起来，或者需要将其删除掉，等等。</p>
-<table>
-<thead>
-<tr>
-<th>序号</th>
-<th>选项列表</th>
-<th>对应含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1</td>
-<td>p&#x2F;pick</td>
-<td>使用这个commit记录</td>
-</tr>
-<tr>
-<td>2</td>
-<td>r&#x2F;reword</td>
-<td>使用这个commit记录，并且修改提交信息</td>
-</tr>
-<tr>
-<td>3</td>
-<td>e&#x2F;edit</td>
-<td>使用这个commit记录，rebase时会短暂的允许你修改这个commit</td>
-</tr>
-<tr>
-<td>4</td>
-<td>s&#x2F;squash</td>
-<td>使用这个commit记录，但是会与上一个commit合并</td>
-</tr>
-<tr>
-<td>5</td>
-<td>f&#x2F;fixup</td>
-<td>和squash相同，但是不会保留commit时候提交的信息</td>
-</tr>
-<tr>
-<td>6</td>
-<td>x&#x2F;exec</td>
-<td>执行其它shell命令</td>
-</tr>
-<tr>
-<td>7</td>
-<td>d&#x2F;drop</td>
-<td>移除这个commit记录</td>
-</tr>
-</tbody></table>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 调整最近五次的提交记录</span><br>$ git rebase -i HEAD~5    <br>$ git rebase -i 5af4zd35  <span class="hljs-comment"># 往前第六次的commit值</span><br>reword c2aeb6e 3rd commit<br>squash 25a3122 4th commit<br>pick 5d36f1d 5th commit<br>fixup bd5d32f 6th commit<br>drop 581e96d 7th commit<br><br><span class="hljs-comment"># 查看提交历史记录</span><br>$ git <span class="hljs-built_in">log</span><br>* ce813eb - (HEAD -&gt; master) 5th commit<br>* aa2f043 - 3rd commit -&gt; modified<br>* 6c5418f - 2nd commit<br>* c8f7dea - 1st commit<br></code></pre></td></tr></table></figure>
-<h4 id="5-3-git-commit-–amend"><a href="#5-3-git-commit-–amend" class="headerlink" title="5.3 git commit –amend"></a>5.3 git commit –amend</h4><p>有时候提交之后，我们才发现提交的历史记录中存在这一些问题，而这个时候我们又不想新生成一个 commit 记录，且达到一个修改的目录。即，修改之前的 commit 提交记录。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 不使用分页器</span><br>$ git --no-pager <span class="hljs-built_in">log</span> --oneline -1<br>d5e96d9 (HEAD -&gt; master) say file<br><br><span class="hljs-comment"># 改变提交信息并加入暂存区</span><br>$ <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;hello&quot;</span> &gt; say.txt<br>$ git add -u<br><br><span class="hljs-comment"># 改变当前最新一次提交记录</span><br>$ git commit --amend<br><span class="hljs-comment"># 改变且息不改变提交信</span><br>$ git commit --amend --no-edit<br><span class="hljs-comment"># 改变当前最新一次提交记录并修改信息</span><br>$ git commit --amend -m <span class="hljs-string">&quot;some_info&quot;</span><br><br><span class="hljs-comment"># 不使用分页器</span><br>$ git --no-pager <span class="hljs-built_in">log</span> --oneline -1<br>9e1e0eb (HEAD -&gt; master) say file<br></code></pre></td></tr></table></figure>
-<h4 id="5-4-找回代码"><a href="#5-4-找回代码" class="headerlink" title="5.4 找回代码"></a>5.4 找回代码</h4><p>如何找回我们丢失的内容和记录？</p>
-<p>我们之前说过，使用下面命令回退内容、强制推送代码、删除本地分支，都是非常危险的操作，因为重置之后我们就没有办法在找到之前的修改内容了</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 回退</span><br>$ git reset --hard &lt;commit&gt;<br><span class="hljs-comment"># 推送</span><br>$ git push origin master -f<br><span class="hljs-comment"># 分支</span><br>$ git branch -D &lt;branch_name&gt;<br></code></pre></td></tr></table></figure>
-<p>其实 Git 给我们留了一个后门，就是使用 relflog 命令来找回之前的内容，只不过是相对来说麻烦一些。而原理也很简答，就是在我们使用 Git 命令操作仓库的时候，Git 偷偷地帮助我们把所有的操作记录了下来。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 查看日志记录</span><br>$ git --no-pager <span class="hljs-built_in">log</span> --oneline -1<br>4bc8703 (HEAD -&gt; master) hhhh<br><br><span class="hljs-comment"># 回退到上次提交</span><br>$ git reset --hard HEAD~1<br><br><span class="hljs-comment"># 查看引用日志记录</span><br>$ git reflog<br>6a89f1b (HEAD -&gt; master) HEAD@&#123;0&#125;: reset: moving to HEAD~1<br>4bc8703 HEAD@&#123;1&#125;: commit (amend): hhhh<br><br><span class="hljs-comment"># 找回内容</span><br>$ git cherry-pick 4bc8703<br></code></pre></td></tr></table></figure>
                 
               </div>
             
@@ -383,7 +320,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E5%B7%A5%E5%85%B7/" class="category-chain-item">工具</a>
+  <a href="/categories/python/" class="category-chain-item">python</a>
   
   
 
@@ -398,7 +335,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E8%A7%84%E8%8C%83/" class="print-no-link">#规范</a>
+        <a href="/tags/python/" class="print-no-link">#python</a>
       
     </div>
   
@@ -410,8 +347,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Git使用</div>
-      <div>https://vegetablest.github.io/2021/03/21/git使用/</div>
+      <div>Python 中 yield 关键字起什么作用？</div>
+      <div>https://vegetablest.github.io/2025/06/03/python-yield/</div>
     </div>
     <div class="license-meta">
       
@@ -423,7 +360,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2021年3月21日</div>
+          <div>2025年6月3日</div>
         </div>
       
       
@@ -455,18 +392,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/04/24/ElasticSearch-Tips/" title="ElasticSearch-Tips">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">ElasticSearch-Tips</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/02/19/%E6%97%A5%E5%BF%97%E8%A7%84%E8%8C%83/" title="日志规范">
-                        <span class="hidden-mobile">日志规范</span>
+                      <a href="/2025/05/31/python-monkey-patch/" title="Python Monkey Patching">
+                        <span class="hidden-mobile">Python Monkey Patching</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
