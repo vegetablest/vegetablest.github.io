@@ -24,7 +24,7 @@
 <meta property="og:description" content="两数之和，梦开始的地方 给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出 和为目标值 target  的那 两个 整数，并返回它们的数组下标。你可以假设每种输入只会对应一个答案，并且你不能使用两次相同的元素。你可以按任意顺序返回答案。示例 1： 输入：nums &#x3D; [2,7,11,15], target &#x3D; 9输出：[0,1]解释：因为 nums">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-06-04T03:06:36.000Z">
-<meta property="article:modified_time" content="2025-06-05T04:04:07.720Z">
+<meta property="article:modified_time" content="2025-06-06T03:11:22.729Z">
 <meta property="article:author" content="af su">
 <meta property="article:tag" content="算法-简单">
 <meta name="twitter:card" content="summary_large_image">
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          8.6k 字
+          11k 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          22 分钟
+          29 分钟
         
       </span>
     
@@ -393,6 +393,59 @@
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>	<span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isValid</span><span class="hljs-params">(String s)</span> &#123;<br>		<span class="hljs-keyword">if</span> (s.length() % <span class="hljs-number">2</span> == <span class="hljs-number">1</span>) &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>		&#125;<br>		Deque&lt;Character&gt; stack = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>		Map&lt;Character, Character&gt; pairs = Map.of(<span class="hljs-string">&#x27;&#125;&#x27;</span>, <span class="hljs-string">&#x27;&#123;&#x27;</span>, <span class="hljs-string">&#x27;]&#x27;</span>, <span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;)&#x27;</span>, <span class="hljs-string">&#x27;(&#x27;</span>);<br>		<span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; s.length(); i++) &#123;<br>			<span class="hljs-type">char</span> <span class="hljs-variable">ch</span> <span class="hljs-operator">=</span> s.charAt(i);<br>			<span class="hljs-keyword">if</span> (pairs.containsKey(ch)) &#123;<br>				<span class="hljs-keyword">if</span> (stack.isEmpty()) &#123;<br>					<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>				&#125;<br>				<span class="hljs-keyword">if</span> (stack.peek() != pairs.get(ch)) &#123;<br>					<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>				&#125;<br>				stack.pop();<br>				<span class="hljs-keyword">continue</span>;<br>			&#125;<br>			stack.push(ch);<br>		&#125;<br>		<span class="hljs-keyword">return</span> stack.isEmpty();<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
+<ol start="6">
+<li>合并两个有序链表<blockquote>
+<p>将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给&gt;定的两个链表的所有节点组成的。 </p>
+<p>示例 1：</p>
+<p>输入：l1 &#x3D; [1,2,4], l2 &#x3D; [1,3,4]<br>输出：[1,1,2,3,4,4]<br>示例 2：</p>
+<p>输入：l1 &#x3D; [], l2 &#x3D; []<br>输出：[]<br>示例 3：</p>
+<p>输入：l1 &#x3D; [], l2 &#x3D; [0]<br>输出：[0]</p>
+<p>提示：</p>
+<p>两个链表的节点数目范围是 [0, 50]<br>-100 &lt;&#x3D; Node.val &lt;&#x3D; 100<br>l1 和 l2 均按 非递减顺序 排列</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># Definition for singly-linked list.</span><br><span class="hljs-comment"># class ListNode:</span><br><span class="hljs-comment">#     def __init__(self, val=0, next=None):</span><br><span class="hljs-comment">#         self.val = val</span><br><span class="hljs-comment">#         self.next = next</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">mergeTwoLists</span>(<span class="hljs-params">self, l1: ListNode, l2: ListNode</span>) -&gt; ListNode:<br>        prev = prehead = ListNode(-<span class="hljs-number">1</span>)<br>        <span class="hljs-keyword">while</span> l1 <span class="hljs-keyword">and</span> l2:<br>            <span class="hljs-keyword">if</span> l1.val &lt;= l2.val:<br>                prev.<span class="hljs-built_in">next</span> = l1<br>                l1 = l1.<span class="hljs-built_in">next</span><br>            <span class="hljs-keyword">else</span>:<br>                prev.<span class="hljs-built_in">next</span> = l2<br>                l2 = l2.<span class="hljs-built_in">next</span>            <br>            prev = prev.<span class="hljs-built_in">next</span><br><br>        <span class="hljs-comment"># 合并后 l1 和 l2 最多只有一个还未被合并完，我们直接将链表末尾指向未合并完的链表即可</span><br>        prev.<span class="hljs-built_in">next</span> = l1 <span class="hljs-keyword">if</span> l1 <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span> <span class="hljs-keyword">else</span> l2<br><br>        <span class="hljs-keyword">return</span> prehead.<span class="hljs-built_in">next</span><br></code></pre></td></tr></table></figure>
+
+<ol start="7">
+<li>删除有序数组中的重复项<blockquote>
+<p>给你一个 非严格递增排列 的数组 nums ，请你 原地 删除重复出现的元&gt;素，使每个元素 只出现一次 ，返回删除后数组的新长度。元素的 相对顺&gt;序 应该保持 一致 。然后返回 nums 中唯一元素的个数。</p>
+<p>考虑 nums 的唯一元素的数量为 k ，你需要做以下事情确保你的题解可&gt;以被通过：</p>
+<p>更改数组 nums ，使 nums 的前 k 个元素包含唯一元素，并按照它们最&gt;初在 nums 中出现的顺序排列。nums 的其余元素与 nums 的大小不重&gt;要。<br>返回 k 。<br>判题标准:</p>
+<p>系统会用下面的代码来测试你的题解:</p>
+<p>int[] nums &#x3D; […]; &#x2F;&#x2F; 输入数组<br>int[] expectedNums &#x3D; […]; &#x2F;&#x2F; 长度正确的期望答案</p>
+<p>int k &#x3D; removeDuplicates(nums); &#x2F;&#x2F; 调用</p>
+<p>assert k &#x3D;&#x3D; expectedNums.length;<br>for (int i &#x3D; 0; i &lt; k; i++) {<br>   assert nums[i] &#x3D;&#x3D; expectedNums[i];<br>}<br>如果所有断言都通过，那么您的题解将被 通过。</p>
+<p>示例 1：</p>
+<p>输入：nums &#x3D; [1,1,2]<br>输出：2, nums &#x3D; [1,2,_]<br>解释：函数应该返回新的长度 2 ，并且原数组 nums 的前两个元素被修&gt;改为 1, 2 。不需要考虑数组中超出新长度后面的元素。<br>示例 2：</p>
+<p>输入：nums &#x3D; [0,0,1,1,1,2,2,3,3,4]<br>输出：5, nums &#x3D; [0,1,2,3,4]<br>解释：函数应该返回新的长度 5 ， 并且原数组 nums 的前五个元素被修&gt;改为 0, 1, 2, 3, 4 。不需要考虑数组中超出新长度后面的元素。</p>
+<p>提示：</p>
+<p>1 &lt;&#x3D; nums.length &lt;&#x3D; 3 * 104<br>-104 &lt;&#x3D; nums[i] &lt;&#x3D; 104<br>nums 已按 非严格递增 排列</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">removeDuplicates</span>(<span class="hljs-params">self, nums: <span class="hljs-type">List</span>[<span class="hljs-built_in">int</span>]</span>) -&gt; <span class="hljs-built_in">int</span>:<br>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> nums:<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span><br><br>        length = <span class="hljs-built_in">len</span>(nums)<br>        fast = slow = <span class="hljs-number">1</span><br>        <span class="hljs-keyword">while</span> fast &lt; length:<br>            <span class="hljs-keyword">if</span> nums[fast] != nums[fast-<span class="hljs-number">1</span>]:<br>                nums[slow] = nums[fast]<br>                slow+=<span class="hljs-number">1</span><br>            fast+=<span class="hljs-number">1</span><br>        <span class="hljs-keyword">return</span> slow<br></code></pre></td></tr></table></figure>
+
+<ol start="8">
+<li>移除元素<blockquote>
+<p>给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 &gt;val 的元素。元素的顺序可能发生改变。然后返回 nums 中与 val 不同&gt;的元素的数量。</p>
+<p>假设 nums 中不等于 val 的元素数量为 k，要通过此题，您需要执行以&gt;下操作：</p>
+<p>更改 nums 数组，使 nums 的前 k 个元素包含不等于 val 的元素。&gt;nums 的其余元素和 nums 的大小并不重要。<br>返回 k。<br>用户评测：</p>
+<p>评测机将使用以下代码测试您的解决方案：</p>
+<p>int[] nums &#x3D; […]; &#x2F;&#x2F; 输入数组<br>int val &#x3D; …; &#x2F;&#x2F; 要移除的值<br>int[] expectedNums &#x3D; […]; &#x2F;&#x2F; 长度正确的预期答案。<br>                           &#x2F;&#x2F; 它以不等于 val 的值排序。</p>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p>int k &#x3D; removeElement(nums, val); &#x2F;&#x2F; 调用你的实现</p>
+<p>assert k &#x3D;&#x3D; expectedNums.length;<br>sort(nums, 0, k); &#x2F;&#x2F; 排序 nums 的前 k 个元素<br>for (int i &#x3D; 0; i &lt; actualLength; i++) {<br>   assert nums[i] &#x3D;&#x3D; expectedNums[i];<br>}<br>如果所有的断言都通过，你的解决方案将会 通过。</p>
+<p>示例 1：</p>
+<p>输入：nums &#x3D; [3,2,2,3], val &#x3D; 3<br>输出：2, nums &#x3D; [2,2,<em>,</em>]<br>解释：你的函数函数应该返回 k &#x3D; 2, 并且 nums 中的前两个元素均为 &gt;2。<br>你在返回的 k 个元素之外留下了什么并不重要（因此它们并不计入评&gt;测）。<br>示例 2：</p>
+<p>输入：nums &#x3D; [0,1,2,2,3,0,4,2], val &#x3D; 2<br>输出：5, nums &#x3D; [0,1,4,0,3,<em>,</em>,_]<br>解释：你的函数应该返回 k &#x3D; 5，并且 nums 中的前五个元素为 0,0,&gt;1,3,4。<br>注意这五个元素可以任意顺序返回。<br>你在返回的 k 个元素之外留下了什么并不重要（因此它们并不计入评&gt;测）。</p>
+<p>提示：</p>
+<p>0 &lt;&#x3D; nums.length &lt;&#x3D; 100<br>0 &lt;&#x3D; nums[i] &lt;&#x3D; 50<br>0 &lt;&#x3D; val &lt;&#x3D; 100</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">removeElement</span>(<span class="hljs-params">self, nums: <span class="hljs-type">List</span>[<span class="hljs-built_in">int</span>], val: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>        left = <span class="hljs-number">0</span><br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(nums)):<br>            <span class="hljs-keyword">if</span> nums[i] != val:<br>                nums[left] = nums[i]<br>                left += <span class="hljs-number">1</span><br>        <span class="hljs-keyword">return</span> left<br></code></pre></td></tr></table></figure>
 
                 
               </div>
