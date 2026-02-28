@@ -1,0 +1,716 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="af su">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="最近我写的代码被同事code review时一直被吐槽，而我发现确实存在各种各样的问题，所以我打算把这些都给记录下来，以后不断改进 1.正确的命名 有一句老话说的好：计算机科学有两件难事，一是缓存失效，二是取名。我对第二点深有体会，所以我记录了一下取名的一些规范   尽量避免使用单个字母去给变量命名，这会使变量失去相关信息12345678910public sealed class People">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码美学">
+<meta property="og:url" content="https://vegetablest.github.io/2022/08/13/code_aesthetics/index.html">
+<meta property="og:site_name" content="vegetablest">
+<meta property="og:description" content="最近我写的代码被同事code review时一直被吐槽，而我发现确实存在各种各样的问题，所以我打算把这些都给记录下来，以后不断改进 1.正确的命名 有一句老话说的好：计算机科学有两件难事，一是缓存失效，二是取名。我对第二点深有体会，所以我记录了一下取名的一些规范   尽量避免使用单个字母去给变量命名，这会使变量失去相关信息12345678910public sealed class People">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-13T10:48:16.000Z">
+<meta property="article:modified_time" content="2026-02-28T07:55:16.985Z">
+<meta property="article:author" content="af su">
+<meta property="article:tag" content="规范">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>代码美学 - vegetablest</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"vegetablest.github.io","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Vegetablest</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="代码美学"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-08-13 10:48" pubdate>
+          2022年8月13日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          17k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          42 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">代码美学</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>最近我写的代码被同事code review时一直被吐槽，而我发现确实存在各种各样的问题，所以我打算把这些都给记录下来，以后不断改进</p>
+<h3 id="1-正确的命名"><a href="#1-正确的命名" class="headerlink" title="1.正确的命名"></a>1.正确的命名</h3><blockquote>
+<p>有一句老话说的好：计算机科学有两件难事，一是缓存失效，二是取名。我对第二点深有体会，所以我记录了一下取名的一些规范</p>
+</blockquote>
+<ul>
+<li>尽量避免使用单个字母去给变量命名，这会使变量失去相关信息<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">People</span> <span class="hljs-keyword">permits</span> Student, Teacher &#123;<br>    <span class="hljs-comment">// before</span><br>    <span class="hljs-keyword">private</span> String n;<br>    <span class="hljs-keyword">private</span> String p;<br>    <span class="hljs-keyword">private</span> Integer a;<br>    <span class="hljs-comment">//after</span><br>    <span class="hljs-keyword">private</span> String userName;<br>    <span class="hljs-keyword">private</span> String passWord;<br>    <span class="hljs-keyword">private</span> Integer age;<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>绝对不要使用缩写，因为缩写的含义依赖于上下文，尽量避免让别人读代码时候依赖上下文<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">int</span> price_count_reader;    <span class="hljs-comment">// 无缩写</span><br><span class="hljs-type">int</span> num_errors;            <span class="hljs-comment">// &quot;num&quot; 是一个常见的写法</span><br><span class="hljs-type">int</span> num_dns_connections;   <span class="hljs-comment">// 人人都知道 &quot;DNS&quot; 是什么</span><br><br><span class="hljs-type">int</span> n;                     <span class="hljs-comment">// 毫无意义.</span><br><span class="hljs-type">int</span> nerr;                  <span class="hljs-comment">// 含糊不清的缩写.</span><br><span class="hljs-type">int</span> n_comp_conns;          <span class="hljs-comment">// 含糊不清的缩写.</span><br><span class="hljs-type">int</span> wgc_connections;       <span class="hljs-comment">// 只有贵团队知道是什么意思.</span><br><span class="hljs-type">int</span> pc_reader;             <span class="hljs-comment">// &quot;pc&quot; 有太多可能的解释了.</span><br><span class="hljs-type">int</span> cstmr_id;              <span class="hljs-comment">// 删减了若干字母.</span><br></code></pre></td></tr></table></figure></li>
+<li>不要在命名中参杂变量类型信息，比如passWordStr、userNameStr<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">People</span> <span class="hljs-keyword">permits</span> Student, Teacher &#123;<br>    <span class="hljs-comment">// 前面都已经类型约束了为什么还要写xxxxStr？</span><br>    <span class="hljs-keyword">private</span> String userNameStr;<br>    <span class="hljs-keyword">private</span> String passWordStr;<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>适当的给参数加上单位，比如下边两个哪个更好理解？<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">executor</span><span class="hljs-params">(<span class="hljs-type">int</span> delay)</span>&#123;<br>    <span class="hljs-comment">// TODO</span><br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">executor</span><span class="hljs-params">(<span class="hljs-type">int</span> delaySeconds)</span>&#123;<br>    <span class="hljs-comment">// TODO</span><br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>不要在基类的取名上使用BaseXXX，这样的名字并不好<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">BaseTruck</span> &#123;<br><br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Truck</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">BaseTruck</span> &#123;<br>    <span class="hljs-comment">// Truck总是让人一头雾水</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Truck</span> &#123;<br><br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">TrailerTruck</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Truck</span> &#123;<br>    <span class="hljs-comment">// 更加的具体</span><br>&#125;<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="2-勿写注释-不是指接口文档、方法文档等各种文档哦"><a href="#2-勿写注释-不是指接口文档、方法文档等各种文档哦" class="headerlink" title="2.勿写注释(不是指接口文档、方法文档等各种文档哦)"></a>2.勿写注释(不是指接口文档、方法文档等各种文档哦)</h3><p>这是一个充满争议的问题，其实大部分时间我更加认为注释是告诉我们为什么要这样做而不是解释这么做代表什么意思，其实我们按照上边命名约束做好命名之后就可以通过名称解释大部分代码了。最主要的是有时候我们需要更改代码，但是会发生代码更改了注释没更改的情况，这种情况一旦发生会让读代码的人很头疼的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 如果状态是5代表消息已经发送</span><br><span class="hljs-keyword">if</span> (status == <span class="hljs-number">5</span>) &#123;<br>    message.markSend();<br>&#125;<br><br><span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MESSAGE_SEND</span> <span class="hljs-operator">=</span> <span class="hljs-number">5</span>;<br><span class="hljs-keyword">if</span> (status == MESSAGE_SEND) &#123;  <span class="hljs-comment">// 这句代码读起来就像注释</span><br>    message.markSend();<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 如果消息发送者是当前用户，同时消息是五分钟内发送的，或者当前用户是管理员就可以更新消息</span><br><span class="hljs-keyword">if</span> ((message.user.id == current_user.id &amp;&amp; ((System.currentTimeMillis() - message.delivered_time()) &lt; <span class="hljs-number">300000</span> )) or current_user.role == Role.Admin) &#123;<br>    message.update_text(text);<br>&#125;<br><br><span class="hljs-comment">// after</span><br><span class="hljs-type">boolean</span> <span class="hljs-variable">user_is_author</span> <span class="hljs-operator">=</span> message.user.id == current_user.id;<br><span class="hljs-keyword">final</span> <span class="hljs-type">long</span> <span class="hljs-variable">FIVE_MINUTES</span> <span class="hljs-operator">=</span> <span class="hljs-number">5</span> * <span class="hljs-number">60</span> * <span class="hljs-number">1000</span>;<br><span class="hljs-type">boolean</span> <span class="hljs-variable">is_recent</span> <span class="hljs-operator">=</span> (System.currentTimeMillis() - message.delivered_time()) &lt; FIVE_MINUTES;<br><span class="hljs-keyword">if</span> ((user_is_author &amp;&amp; is_recent) || (current_user.role == Role.Admin)) &#123;<br>    message.update_text(text);<br>&#125;<br><br><span class="hljs-comment">// final</span><br><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">can_edit_message</span><span class="hljs-params">(Message message, User current_user)</span> &#123;<br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">user_is_author</span> <span class="hljs-operator">=</span> message.user.id == current_user.id;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">long</span> <span class="hljs-variable">FIVE_MINUTES</span> <span class="hljs-operator">=</span> <span class="hljs-number">5</span> * <span class="hljs-number">60</span> * <span class="hljs-number">1000</span>;<br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">is_recent</span> <span class="hljs-operator">=</span> (System.currentTimeMillis() - message.delivered_time()) &gt; FIVE_MINUTES;<br>    <span class="hljs-keyword">return</span> (user_is_author &amp;&amp; is_recent) || current_user.role == Role.Admin;<br>&#125;<br><br><span class="hljs-keyword">if</span> (can_edit_message(message, current_user)) &#123;<br>    message.update_text(text);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-不要过度嵌套"><a href="#3-不要过度嵌套" class="headerlink" title="3.不要过度嵌套"></a>3.不要过度嵌套</h3><p>if else作为每种编程语言都不可或缺的条件语句，我们在编程时会大量的用到。但if else一般不建议嵌套超过三层，如果一段代码存在过多的if else嵌套，代码的可读性就会急速下降，后期维护难度也大大提高。所以，不要超过三层！不要超过三层！！不要超过三层！！！<br>减少代码嵌套的手段一般是抽取和反转，反转是指提前返回，抽取往往指提炼方法。</p>
+<ul>
+<li>反转条件，将负面条件移到前面，使方法尽早返回<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">calculate</span><span class="hljs-params">(<span class="hljs-type">int</span> top, <span class="hljs-type">int</span> bottom)</span> &#123;<br>    <span class="hljs-keyword">if</span> (top &gt; bottom) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">sum</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">number</span> <span class="hljs-operator">=</span> bottom; number &lt;= top; number++) &#123;<br>            sum += number;<br>        &#125;<br>        <span class="hljs-keyword">return</span> sum;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">calculate</span><span class="hljs-params">(<span class="hljs-type">int</span> top, <span class="hljs-type">int</span> bottom)</span> &#123;<br>    <span class="hljs-keyword">if</span> (top &lt; bottom) &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    &#125;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">sum</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">number</span> <span class="hljs-operator">=</span> bottom; number &lt;= top; number++) &#123;<br>        sum += number;<br>    &#125;<br>    <span class="hljs-keyword">return</span> sum;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerUser</span><span class="hljs-params">(String user)</span> &#123;<br>    String[] parts = user.split(<span class="hljs-string">&quot;:&quot;</span>);<br>    <span class="hljs-keyword">if</span> (parts.length == <span class="hljs-number">2</span>) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">userId</span> <span class="hljs-operator">=</span> Integer.parseInt(parts[<span class="hljs-number">0</span>]);<br>        <span class="hljs-keyword">if</span> (userId &gt;= <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">String</span> <span class="hljs-variable">userName</span> <span class="hljs-operator">=</span> parts[<span class="hljs-number">1</span>];<br>            <span class="hljs-keyword">if</span> (users.containsKey(userId)) &#123;<br>                users.get(userId).setUserName(userName);<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                users.put(userId, <span class="hljs-keyword">new</span> <span class="hljs-title class_">User</span>(userName));<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;Invalid userId : &quot;</span> + userId);<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;Invalid user string: &quot;</span> + user);<br>    &#125;<br>&#125;<br><span class="hljs-comment">// 反转条件，正确的分支都下沉，异常的分支都上浮</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerUser</span><span class="hljs-params">(String user)</span> &#123;<br>    String[] parts = user.split(<span class="hljs-string">&quot;:&quot;</span>);<br>    <span class="hljs-keyword">if</span> (parts.length != <span class="hljs-number">2</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;Invalid user string: &quot;</span> + user);<br>    &#125;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">userId</span> <span class="hljs-operator">=</span> Integer.parseInt(parts[<span class="hljs-number">0</span>]);<br>    <span class="hljs-keyword">if</span> (userId &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;Invalid userId : &quot;</span> + userId);<br>    &#125;<br>    <span class="hljs-type">String</span> <span class="hljs-variable">userName</span> <span class="hljs-operator">=</span> parts[<span class="hljs-number">1</span>];<br>    <span class="hljs-keyword">if</span> (users.containsKey(userId)) &#123;<br>        users.get(userId).setUserName(userName);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        users.put(userId, <span class="hljs-keyword">new</span> <span class="hljs-title class_">User</span>(userName));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>抽取方法，合理使用设计模式,以一个分享功能为例<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 分享类型</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">ShareType</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">TYPE_LINK</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">TYPE_IMAGE</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">TYPE_TEXT</span> <span class="hljs-operator">=</span> <span class="hljs-number">2</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">TYPE_IMAGE_TEXT</span> <span class="hljs-operator">=</span> <span class="hljs-number">3</span>;<br>&#125;<br><span class="hljs-comment">// 分享元素</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ShareItem</span> &#123;<br>    <span class="hljs-type">int</span> type;<br>    String title;<br>    String content;<br>    String imagePath;<br>    String link;<br>&#125;<br><span class="hljs-comment">// 分享回调</span><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">ShareListener</span> &#123;<br><br>    <span class="hljs-type">int</span> <span class="hljs-variable">STATE_SUCC</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">STATE_FAIL</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">onCallback</span><span class="hljs-params">(<span class="hljs-type">int</span> state, String msg)</span>;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Share</span> &#123;<br>    <span class="hljs-comment">// 分享</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">share</span> <span class="hljs-params">(ShareItem item, ShareListener listener)</span> &#123;<br>        <span class="hljs-keyword">if</span> (item != <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">if</span> (item.type == ShareType.TYPE_LINK) &#123;<br>                <span class="hljs-comment">// 分享链接</span><br>                <span class="hljs-keyword">if</span> (Strings.isNotBlank(item.link) &amp;&amp; Strings.isNotBlank(item.content)) &#123;<br>                    doShareLink(item.link, item.title, item.content, listener);<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>                        listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;分享信息不完整&quot;</span>);<br>                    &#125;<br>                &#125;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (item.type == ShareType.TYPE_IMAGE) &#123;<br>                <span class="hljs-comment">// 分享图片</span><br>                <span class="hljs-keyword">if</span> (Strings.isNotBlank(item.imagePath)) &#123;<br>                    doShareImage(item.imagePath, listener);<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>                        listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;分享信息不完整&quot;</span>);<br>                    &#125;<br>                &#125;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (item.type == ShareType.TYPE_TEXT) &#123;<br>                <span class="hljs-comment">// 分享文本</span><br>                <span class="hljs-keyword">if</span> (Strings.isNotBlank(item.content)) &#123;<br>                    doShareText(item.content, listener);<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>                        listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;分享信息不完整&quot;</span>);<br>                    &#125;<br>                &#125;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (item.type == ShareType.TYPE_IMAGE_TEXT) &#123;<br>                <span class="hljs-comment">// 分享图文</span><br>                <span class="hljs-keyword">if</span> (Strings.isNotBlank(item.imagePath) &amp;&amp; Strings.isNotBlank(item.content)) &#123;<br>                    doShareImageAndText(item.imagePath, item.content, listener);<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>                        listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;分享信息不完整&quot;</span>);<br>                    &#125;<br>                &#125;<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>                    listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;不支持的分享类型&quot;</span>);<br>                &#125;<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>                listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;ShareItem 不能为 null&quot;</span>);<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">// 具体分享功能实现</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doShareImageAndText</span><span class="hljs-params">(String imagePath, String content, ShareListener listener)</span> &#123;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doShareText</span><span class="hljs-params">(String content, ShareListener listener)</span> &#123;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doShareImage</span><span class="hljs-params">(String imagePath, ShareListener listener)</span> &#123;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doShareLink</span><span class="hljs-params">(String link, String title, String content, ShareListener listener)</span> &#123;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+第一步：接口分层，把接口分为外部和内部接口，所有空值判断放在外部接口完成，只处理一次；而内部接口传入的变量由外部接口保证不为空，从而减少空值判断<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">share</span> <span class="hljs-params">(ShareItem item, ShareListener listener)</span> &#123;<br>    <span class="hljs-keyword">if</span> (item == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>            listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;ShareItem 不能为 null&quot;</span>);<br>        &#125;<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (listener == <span class="hljs-literal">null</span>) &#123;<br>        listener = (state, msg) -&gt; log.debug(<span class="hljs-string">&quot;ShareListener is null&quot;</span>);<br>    &#125;<br>    shareImpl(item, listener);<br>&#125;<br><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">shareImpl</span><span class="hljs-params">(ShareItem item, ShareListener listener)</span> &#123;<br>    <span class="hljs-keyword">if</span> (item.type == ShareType.TYPE_LINK) &#123;<br>        <span class="hljs-comment">// 分享链接</span><br>        <span class="hljs-keyword">if</span> (Strings.isNotBlank(item.link) &amp;&amp; Strings.isNotBlank(item.content)) &#123;<br>            doShareLink(item.link, item.title, item.content, listener);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>                listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;分享信息不完整&quot;</span>);<br>            &#125;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (item.type == ShareType.TYPE_IMAGE) &#123;<br>        <span class="hljs-comment">// 分享图片</span><br>        <span class="hljs-keyword">if</span> (Strings.isNotBlank(item.imagePath)) &#123;<br>            doShareImage(item.imagePath, listener);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>                listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;分享信息不完整&quot;</span>);<br>            &#125;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (item.type == ShareType.TYPE_TEXT) &#123;<br>        <span class="hljs-comment">// 分享文本</span><br>        <span class="hljs-keyword">if</span> (Strings.isNotBlank(item.content)) &#123;<br>            doShareText(item.content, listener);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>                listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;分享信息不完整&quot;</span>);<br>            &#125;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (item.type == ShareType.TYPE_IMAGE_TEXT) &#123;<br>        <span class="hljs-comment">// 分享图文</span><br>        <span class="hljs-keyword">if</span> (Strings.isNotBlank(item.imagePath) &amp;&amp; Strings.isNotBlank(item.content)) &#123;<br>            doShareImageAndText(item.imagePath, item.content, listener);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>                listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;分享信息不完整&quot;</span>);<br>            &#125;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>            listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;不支持的分享类型&quot;</span>);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+第二步利用多态，每种业务单独处理，在接口不再做任何业务判断。把ShareItem抽象出来，作为基础类，然后针对每种业务各自实现其子类：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ShareItem</span> &#123;<br>    <span class="hljs-type">int</span> type;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">ShareItem</span><span class="hljs-params">(<span class="hljs-type">int</span> type)</span> &#123;<br>        <span class="hljs-built_in">this</span>.type = type;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doShare</span><span class="hljs-params">(ShareListener listener)</span>;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">LinkShareItem</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ShareItem</span> &#123;<br>    String title;<br>    String content;<br>    String link;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">LinkShareItem</span><span class="hljs-params">(String link, String title, String content)</span> &#123;<br>        <span class="hljs-built_in">super</span>(ShareType.TYPE_LINK);<br>        <span class="hljs-built_in">this</span>.title = Strings.isNotBlank(title) ? title : <span class="hljs-string">&quot;default&quot;</span>;<br>        <span class="hljs-built_in">this</span>.content = Strings.isNotBlank(content) ? content : <span class="hljs-string">&quot;default&quot;</span>;<br>        <span class="hljs-built_in">this</span>.link = Strings.isNotBlank(link) ? link : <span class="hljs-string">&quot;default&quot;</span>;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doShare</span><span class="hljs-params">(ShareListener listener)</span> &#123;<br>        <span class="hljs-comment">// do share</span><br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ImageShareItem</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ShareItem</span> &#123;<br>    String imagePath;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">ImageShareItem</span><span class="hljs-params">(String imagePath)</span> &#123;<br>        <span class="hljs-built_in">super</span>(ShareType.TYPE_IMAGE);<br>        <span class="hljs-built_in">this</span>.imagePath = Strings.isNotBlank(imagePath) ? imagePath : <span class="hljs-string">&quot;default&quot;</span>;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doShare</span><span class="hljs-params">(ShareListener listener)</span> &#123;<br>        <span class="hljs-comment">// do share</span><br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">TextShareItem</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ShareItem</span> &#123;<br>    String content;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">TextShareItem</span><span class="hljs-params">(String content)</span> &#123;<br>        <span class="hljs-built_in">super</span>(ShareType.TYPE_TEXT);<br>        <span class="hljs-built_in">this</span>.content = Strings.isNotBlank(content) ? content : <span class="hljs-string">&quot;default&quot;</span>;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doShare</span><span class="hljs-params">(ShareListener listener)</span> &#123;<br>        <span class="hljs-comment">// do share</span><br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ImageTextShareItem</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ShareItem</span> &#123;<br>    String content;<br>    String imagePath;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">ImageTextShareItem</span><span class="hljs-params">(String imagePath, String content)</span> &#123;<br>        <span class="hljs-built_in">super</span>(ShareType.TYPE_IMAGE_TEXT);<br>        <span class="hljs-built_in">this</span>.imagePath = Strings.isNotBlank(imagePath) ? imagePath : <span class="hljs-string">&quot;default&quot;</span>;<br>        <span class="hljs-built_in">this</span>.content = Strings.isNotBlank(content) ? content : <span class="hljs-string">&quot;default&quot;</span>;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doShare</span><span class="hljs-params">(ShareListener listener)</span> &#123;<br>        <span class="hljs-comment">// do share</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">share</span> <span class="hljs-params">(ShareItem item, ShareListener listener)</span> &#123;<br>    <span class="hljs-keyword">if</span> (item == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>            listener.onCallback(ShareListener.STATE_FAIL, <span class="hljs-string">&quot;ShareItem 不能为 null&quot;</span>);<br>        &#125;<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (listener == <span class="hljs-literal">null</span>) &#123;<br>        listener = (state, msg) -&gt; log.debug(<span class="hljs-string">&quot;ShareListener is null&quot;</span>);<br>    &#125;<br>    item.doShare(listener);<br>&#125;<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="4-组合优于继承"><a href="#4-组合优于继承" class="headerlink" title="4.组合优于继承"></a>4.组合优于继承</h3><blockquote>
+<p>面向对象编程中，有一条非常经典的设计原则，那就是：组合优于继承，多用组合少用继承。同样地，在《阿里巴巴Java开发手册》中有一条规定：谨慎使用继承的方式进行扩展，优先使用组合的方式实现。</p>
+</blockquote>
+<p>每个人在刚刚学习面向对象编程时都会觉得：继承（用来表示类之间的is-a关系）可以实现类的复用。所以，很多开发人员在需要复用一些代码的时候会很自然的使用类的继承的方式，因为书上就是这么写的，官方是这么教的，所以作为面向对象四大特性之一的继承，被我们作为解决代码复用的主要手段之一。虽然继承有诸多作用，但继承层次过深、过复杂，也会影响到代码的可维护性。下边我们就用一个测试来表现它带来的弊端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Getter</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RecodeHashSet</span>&lt;E&gt; <span class="hljs-keyword">extends</span> <span class="hljs-title class_">HashSet</span>&lt;E&gt; &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">addCount</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br><br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">add</span><span class="hljs-params">(E e)</span> &#123;<br>        addCount += <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.add(e);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">addAll</span><span class="hljs-params">(Collection&lt;? extends E&gt; c)</span> &#123;<br>        addCount += c.size();<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.addAll(c);<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRecodeSet</span><span class="hljs-params">()</span> &#123;<br>    RecodeHashSet&lt;String&gt; set = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RecodeHashSet</span>&lt;&gt;();<br>    set.addAll(List.of(<span class="hljs-string">&quot;zs&quot;</span>, <span class="hljs-string">&quot;ls&quot;</span>));<br>    <span class="hljs-keyword">assert</span> set.getAddCount() == <span class="hljs-number">2</span>;  <span class="hljs-comment">// 失败了，addCount == 4?</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>为什么会失败？让人很迷惑，探究源码之后我们发现addAll()会调用add()方法，因为会先调用自己的add()方法所以发生了重复计数，我们只需要把addAll()方法的计算给删除就好了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">addAll</span><span class="hljs-params">(Collection&lt;? extends E&gt; c)</span> &#123;<br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">modified</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;<br>    <span class="hljs-keyword">for</span> (E e : c)<br>        <span class="hljs-keyword">if</span> (add(e))<br>            modified = <span class="hljs-literal">true</span>;<br>    <span class="hljs-keyword">return</span> modified;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>虽然删除之后问题解决了但是这样真的合适吗，是不是需要在我们极度熟悉父类源码的情况下才能发现问题，如果有一天HashSet的add()方法不再调用add()方法我们的RecodeSet是不是又会出现问题，所以为了避免父类的方法具体实现对我们带来影响我们应该使用组合而非继承。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@AllArgsConstructor</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ForwardingSet</span>&lt;E&gt; <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Set</span>&lt;E&gt; &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Set&lt;E&gt; set;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">size</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> set.size();<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isEmpty</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> set.isEmpty();<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">contains</span><span class="hljs-params">(Object o)</span> &#123;<br>        <span class="hljs-keyword">return</span> set.contains(o);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> Iterator&lt;E&gt; <span class="hljs-title function_">iterator</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> set.iterator();<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> Object[] toArray() &#123;<br>        <span class="hljs-keyword">return</span> set.toArray();<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> &lt;T&gt; T[] toArray(T[] a) &#123;<br>        <span class="hljs-keyword">return</span> set.toArray(a);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">add</span><span class="hljs-params">(E e)</span> &#123;<br>        <span class="hljs-keyword">return</span> set.add(e);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">remove</span><span class="hljs-params">(Object o)</span> &#123;<br>        <span class="hljs-keyword">return</span> set.remove(o);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">containsAll</span><span class="hljs-params">(Collection&lt;?&gt; c)</span> &#123;<br>        <span class="hljs-keyword">return</span> set.containsAll(c);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">addAll</span><span class="hljs-params">(Collection&lt;? extends E&gt; c)</span> &#123;<br>        <span class="hljs-keyword">return</span> set.addAll(c);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">retainAll</span><span class="hljs-params">(Collection&lt;?&gt; c)</span> &#123;<br>        <span class="hljs-keyword">return</span> set.retainAll(c);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">removeAll</span><span class="hljs-params">(Collection&lt;?&gt; c)</span> &#123;<br>        <span class="hljs-keyword">return</span> set.removeAll(c);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">clear</span><span class="hljs-params">()</span> &#123;<br>        set.clear();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Getter</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RecodeHashSet</span>&lt;E&gt; <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ForwardingSet</span>&lt;E&gt; &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">addCount</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">RecodeHashSet</span><span class="hljs-params">(Set&lt;E&gt; set)</span> &#123;<br>        <span class="hljs-built_in">super</span>(set);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">add</span><span class="hljs-params">(E e)</span> &#123;<br>        addCount += <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.add(e);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">addAll</span><span class="hljs-params">(Collection&lt;? extends E&gt; c)</span> &#123;<br>        addCount += c.size();<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.addAll(c);<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRecodeSet</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">// 不光能传入hashset，还能传入任何set类型，并不会让父类的行为影响我们</span><br>    RecodeHashSet&lt;String&gt; set = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RecodeHashSet</span>&lt;&gt;(<span class="hljs-keyword">new</span> <span class="hljs-title class_">HashSet</span>&lt;&gt;());<br>    set.addAll(List.of(<span class="hljs-string">&quot;zs&quot;</span>, <span class="hljs-string">&quot;ls&quot;</span>));<br>    <span class="hljs-keyword">assert</span> set.getAddCount() == <span class="hljs-number">2</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="5-不要过度抽象"><a href="#5-不要过度抽象" class="headerlink" title="5.不要过度抽象"></a>5.不要过度抽象</h3><blockquote>
+<p>我们提高代码复用常用的一个套路就是识别重复的代码进行抽象，然后继承，我们容易误入的一个怪圈就是抽象越多越好，但是过度抽象带给我们的就是耦合，我们再去清理对象关系的时候只能看到错综复杂的关系网，如果我们一直不抽象那么就会给我们带来一写重复代码，所以把我抽象的程度很重要</p>
+</blockquote>
+<p>比如我现在有一个游戏系统，我想把用户所有的数据保存到XML文件中，我就会写这样的代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SaveGameData</span> &#123;<br><br>    <span class="hljs-keyword">private</span> String fileName;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SaveGameData</span><span class="hljs-params">(String fileName)</span> &#123;<br>        <span class="hljs-built_in">this</span>.fileName = fileName;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">save</span><span class="hljs-params">(GameStat stat)</span> &#123;<br>        <span class="hljs-comment">// 1.生成一个格式化转化工具，将stat转xml</span><br>        <span class="hljs-comment">// 2.将xml转成字节流</span><br>        <span class="hljs-comment">// 3.写入文件</span><br>    &#125;<br><br>    <span class="hljs-keyword">public</span> GameStat <span class="hljs-title function_">load</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-comment">// 1.读取文件</span><br>        <span class="hljs-comment">// 2.将字节流转成xml</span><br>        <span class="hljs-comment">// 3.将xml转成GameStat</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>现在我需要增加对json格式的支持，怎么办？改造</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SaveGameData</span> &#123;<br><br>    <span class="hljs-keyword">private</span> SaveMode saveMode;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> <span class="hljs-title class_">SaveMode</span> &#123;<br>        XML,<br>        JSON;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SaveGameData</span><span class="hljs-params">(SaveMode saveMode)</span> &#123;<br>        <span class="hljs-built_in">this</span>.saveMode = saveMode;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">save</span><span class="hljs-params">(GameStat stat, String fileName)</span> &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.saveMode == SaveMode.XML) &#123;<br>            <span class="hljs-type">SaveXml</span> <span class="hljs-variable">saveXml</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SaveXml</span>(fileName);<br>            saveXml.save();<br>        &#125;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.saveMode == SaveMode.JSON) &#123;<br>            <span class="hljs-type">SaveJson</span> <span class="hljs-variable">saveJson</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SaveJson</span>(fileName);<br>            saveJson.save();<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> GameStat <span class="hljs-title function_">load</span><span class="hljs-params">(String fileName)</span> &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.saveMode == SaveMode.XML) &#123;<br>            <span class="hljs-type">SaveXml</span> <span class="hljs-variable">saveXml</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SaveXml</span>(fileName);<br>            <span class="hljs-keyword">return</span> saveXml.load();<br>        &#125;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.saveMode == SaveMode.JSON) &#123;<br>            <span class="hljs-type">SaveJson</span> <span class="hljs-variable">saveJson</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SaveJson</span>(fileName);<br>            <span class="hljs-keyword">return</span> saveJson.load();<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GameStat</span> &#123;<br>    <span class="hljs-keyword">private</span> Map&lt;String, String&gt; userData;<br>&#125;<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SaveXml</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SaveXml</span><span class="hljs-params">(String fileName)</span> &#123;<br>        <span class="hljs-built_in">this</span>.fileName = fileName;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">save</span><span class="hljs-params">()</span> &#123;&#125;<br><br>    <span class="hljs-keyword">public</span> GameStat <span class="hljs-title function_">load</span><span class="hljs-params">()</span> &#123;<span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;&#125;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SaveJson</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SaveJson</span><span class="hljs-params">(String fileName)</span> &#123;<br>        <span class="hljs-built_in">this</span>.fileName = fileName;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">save</span><span class="hljs-params">()</span> &#123;&#125;<br><br>    <span class="hljs-keyword">public</span> GameStat <span class="hljs-title function_">load</span><span class="hljs-params">()</span> &#123;<span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>当我们改完之后我们编译器告诉我们有大量判断代码是重复，这个时候我们开始思考是否需要抽象？然后开始抽象得到</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SaveGameData</span> &#123;<br><br>    <span class="hljs-keyword">private</span> SaveMode saveMode;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> <span class="hljs-title class_">SaveMode</span> &#123;<br>        XML,<br>        JSON;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SaveGameData</span><span class="hljs-params">(SaveMode saveMode)</span> &#123;<br>        <span class="hljs-built_in">this</span>.saveMode = saveMode;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">save</span><span class="hljs-params">(GameStat stat, String fileName)</span> &#123;<br>        <span class="hljs-type">FileSave</span> <span class="hljs-variable">save</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.saveMode == SaveMode.XML) &#123;<br>            save = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SaveXml</span>(fileName);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.saveMode == SaveMode.JSON) &#123;<br>            save = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SaveJson</span>(fileName);<br>        &#125;<br>        save.save(stat);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> GameStat <span class="hljs-title function_">load</span><span class="hljs-params">(String fileName)</span> &#123;<br>        <span class="hljs-type">FileSave</span> <span class="hljs-variable">load</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.saveMode == SaveMode.XML) &#123;<br>            load = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SaveXml</span>(fileName);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.saveMode == SaveMode.JSON) &#123;<br>            load = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SaveJson</span>(fileName);<br>        &#125;<br>        <span class="hljs-keyword">return</span> load.load();<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GameStat</span> &#123;<br>    <span class="hljs-keyword">private</span> Map&lt;String, String&gt; userData;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FileSave</span> &#123;<br>    <span class="hljs-keyword">private</span> String fileName;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">FileSave</span><span class="hljs-params">(String fileName)</span> &#123;<br>        <span class="hljs-built_in">this</span>.fileName = fileName;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">save</span><span class="hljs-params">(GameStat stat)</span> &#123;&#125;<br><br>    <span class="hljs-keyword">public</span> GameStat <span class="hljs-title function_">load</span><span class="hljs-params">()</span> &#123;<span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;&#125;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SaveXml</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">FileSave</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SaveXml</span><span class="hljs-params">(String fileName)</span> &#123;<br>        <span class="hljs-built_in">super</span>(fileName);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">save</span><span class="hljs-params">(GameStat stat)</span> &#123;&#125;<br><br>    <span class="hljs-keyword">public</span> GameStat <span class="hljs-title function_">load</span><span class="hljs-params">()</span> &#123;<span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;&#125;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SaveJson</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">FileSave</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SaveJson</span><span class="hljs-params">(String fileName)</span> &#123;<br>        <span class="hljs-built_in">super</span>(fileName);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">save</span><span class="hljs-params">(GameStat stat)</span> &#123;&#125;<br><br>    <span class="hljs-keyword">public</span> GameStat <span class="hljs-title function_">load</span><span class="hljs-params">()</span> &#123;<span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>看上去很完美，但是其实相比较写两个SaveXml和SaveJson不继承FileSave只是少写了一行private String fileName;而已，但是我们发现强行抽象之后其实它已经和文件有了强耦合，如果之后我们想保存到数据库或者S3或者远程服务器呢？而且我们的save方法与GameStat也绑定了，所以这并不是一个好的抽象，也不是我们真正需要的抽象，或许当我们需要保存更多介质更多保存的类型更多的时候我们可以抽象出来两个顶级接口，而不是现在就提早抽象了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Others/" class="category-chain-item">Others</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%A7%84%E8%8C%83/" class="print-no-link">#规范</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>代码美学</div>
+      <div>https://vegetablest.github.io/2022/08/13/code_aesthetics/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>af su</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年8月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/08/25/JFR/" title="Java Flight Recorder">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Java Flight Recorder</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/08/12/%E5%A5%BD%E7%94%A8%E4%BD%86%E4%B8%8D%E4%B8%BA%E4%BA%BA%E7%9F%A5%E7%9A%84API/" title="好用但不为人知的API">
+                        <span class="hidden-mobile">好用但不为人知的API</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

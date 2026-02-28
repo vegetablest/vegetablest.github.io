@@ -1,0 +1,992 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="af su">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="这里记录一下es使用经验1.ES资源评估公式   各规格下最大索引速度和查询速度预估      集群规模 3master+n data    连接方式 直连同步写及同步查询    数据量 查询基于320W数据，单条数据1K，索引1个副本、刷新时间1s，其他索引配置默认。    评估依据 基于data节点数的影响结果，预估不同data节点个数时的最大索引速度和查询速度，n为数据节点数。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElasticSearch-Tips">
+<meta property="og:url" content="https://vegetablest.github.io/2021/04/24/ElasticSearch-Tips/index.html">
+<meta property="og:site_name" content="vegetablest">
+<meta property="og:description" content="这里记录一下es使用经验1.ES资源评估公式   各规格下最大索引速度和查询速度预估      集群规模 3master+n data    连接方式 直连同步写及同步查询    数据量 查询基于320W数据，单条数据1K，索引1个副本、刷新时间1s，其他索引配置默认。    评估依据 基于data节点数的影响结果，预估不同data节点个数时的最大索引速度和查询速度，n为数据节点数。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-24T21:56:31.000Z">
+<meta property="article:modified_time" content="2026-02-28T07:55:16.977Z">
+<meta property="article:author" content="af su">
+<meta property="article:tag" content="中间件">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>ElasticSearch-Tips - vegetablest</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"vegetablest.github.io","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Vegetablest</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ElasticSearch-Tips"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-04-24 21:56" pubdate>
+          2021年4月24日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          38k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          95 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ElasticSearch-Tips</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="这里记录一下es使用经验"><a href="#这里记录一下es使用经验" class="headerlink" title="这里记录一下es使用经验"></a>这里记录一下es使用经验</h2><h3 id="1-ES资源评估公式"><a href="#1-ES资源评估公式" class="headerlink" title="1.ES资源评估公式"></a>1.ES资源评估公式</h3><table>
+<thead>
+<tr>
+<th>各规格下最大索引速度和查询速度预估</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>集群规模</td>
+<td>3master+n data</td>
+<td></td>
+</tr>
+<tr>
+<td>连接方式</td>
+<td>直连同步写及同步查询</td>
+<td></td>
+</tr>
+<tr>
+<td>数据量</td>
+<td>查询基于320W数据，单条数据1K，索引1个副本、刷新时间1s，其他索引配置默认。</td>
+<td></td>
+</tr>
+<tr>
+<td>评估依据</td>
+<td>基于data节点数的影响结果，预估不同data节点个数时的最大索引速度和查询速度，n为数据节点数。</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>虚拟机资源规格(CPU&#x2F;JVM&#x2F;主机)</td>
+<td>索引速度（&#x2F;s）</td>
+<td>查询速度（&#x2F;s）</td>
+</tr>
+<tr>
+<td>0.5C&#x2F;1G&#x2F;2G</td>
+<td>30_(1+n_0.2)</td>
+<td>10_(1+n_0.2)</td>
+</tr>
+<tr>
+<td>1C&#x2F;2G&#x2F;4G</td>
+<td>100_(1+n_0.2)</td>
+<td>55_(1+n_0.2)</td>
+</tr>
+<tr>
+<td>2C&#x2F;4G&#x2F;8G</td>
+<td>430_(1+n_0.2)</td>
+<td>170_(1+n_0.2)</td>
+</tr>
+<tr>
+<td>4C&#x2F;8G&#x2F;16G</td>
+<td>1150_(1+n_0.2)</td>
+<td>500_(1+n_0.2)</td>
+</tr>
+<tr>
+<td>8C&#x2F;16G&#x2F;32G</td>
+<td>2600_(1+n_0.2)</td>
+<td>1800_(1+n_0.2)</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>容器资源规格(CPU&#x2F;JVM&#x2F;主机)</td>
+<td>索引速度（&#x2F;s）</td>
+<td>查询速度（&#x2F;s）</td>
+</tr>
+<tr>
+<td>1C&#x2F;2G&#x2F;4G</td>
+<td>110+n*20</td>
+<td>50+n*10</td>
+</tr>
+<tr>
+<td>2C&#x2F;8G&#x2F;16G</td>
+<td>420+n*80</td>
+<td>170+n*30</td>
+</tr>
+<tr>
+<td>4C&#x2F;16G&#x2F;32G</td>
+<td>1100+n*200</td>
+<td>550+n*110</td>
+</tr>
+<tr>
+<td>8C&#x2F;32G&#x2F;64G</td>
+<td>2700+n*500</td>
+<td>1900+n*300</td>
+</tr>
+<tr>
+<td>12C&#x2F;32G&#x2F;64G</td>
+<td>4600+n*900</td>
+<td>4000+n*800</td>
+</tr>
+<tr>
+<td>16C&#x2F;32G&#x2F;64G</td>
+<td>6800+n*1400</td>
+<td>7000+n*1400</td>
+</tr>
+<tr>
+<td>24C&#x2F;32G&#x2F;64G</td>
+<td>12300+n*2400</td>
+<td>15300+n*3100</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>主分片数的评估方式</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>要求</td>
+<td>1、同一个节点上分配的索引分片数不超过3个。</td>
+<td></td>
+</tr>
+<tr>
+<td>2、每个索引分片数大小不超过30G。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>根据集群节点数计算承载最大的主分片数</td>
+<td>节点数*3&#x2F;2</td>
+<td></td>
+</tr>
+<tr>
+<td>根据数据大小计算最大的主分片数</td>
+<td>XG&#x2F;节点数&#x2F;2</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="2-ES配置原则"><a href="#2-ES配置原则" class="headerlink" title="2.ES配置原则"></a>2.ES配置原则</h3><p><strong>服务内存在 1-64G之间的</strong>:</p>
+<p>export ES_HEAP_SIZE &#x3D; 一半服务器的内存把50%的内存给elasticsearch，剩下的50%也不会没有用处的，Lucene会很快吞噬剩下的这部分内存用于文件缓存。</p>
+<p><strong>服务器内存大于64G的</strong>：</p>
+<ul>
+<li>方案一：更多的全文检索： export ES_HEAP_SIZE &#x3D; 31G，剩下的给Lucene</li>
+<li>方案二：更多的排序和聚合：一台机器上创建两个或者更多ES节点，而不要部署一个使用32+GB内存的节点export ES_HEAP_SIZE &#x3D; 31G剩下的给Lucene</li>
+<li>备注：cluster.routing.allocation.same_shard.host:true。这会防止同一个shard的主副本存在同一个物理机上（因为如果存在一个机器上，副本的高可用性就没有了）。</li>
+</ul>
+<p><strong>为什么32G是JVM堆内存设置的一个坎？</strong></p>
+<blockquote>
+<p>JVM 在内存小于 32 GB 的时候会采用一个内存对象指针压缩技术。在 Java 中，所有的对象都分配在堆上，并通过一个指针进行引用。 普通对象指针（OOP）指向这些对象，通常为 CPU 字长 的大小：32 位或 64 位，取决于你的处理器。指针引用的就是这个 OOP 值的字节位置。对于 32 位的系统，意味着堆内存大小最大为 4 GB。对于 64 位的系统， 可以使用更大的内存，但是 64 位的指针意味着更大的浪费，因为你的指针本身大了。更糟糕的是， 更大的指针在主内存和各级缓存（例如 LLC，L1 等）之间移动数据的时候，会占用更多的带宽。Java 使用一个叫作 内存指针压缩（compressed oops）的技术来解决这个问题。 它的指针不再表示对象在内存中的精确位置，而是表示 偏移量 。这意味着 32 位的指针可以引用 40 亿个 对象 ， 而不是 40 亿个字节。最终， 也就是说堆内存增长到 32 GB 的物理内存，也可以用 32 位的指针表示。一旦你越过那个神奇的 ~32 GB 的边界，指针就会切回普通对象的指针。 每个对象的指针都变长了，就会使用更多的 CPU 内存带宽，也就是说你实际上失去了更多的内存。事实上，当内存到达 40–50 GB 的时候，有效内存才相当于使用内存对象指针压缩技术时候的 32 GB 内存。这段描述的意思就是说：即便你有足够的内存，也尽量不要 超过 32 GB。因为它浪费了内存，降低了 CPU 的性能，还要让 GC 应对大内存。</p>
+</blockquote>
+<p><strong>指针压缩</strong></p>
+<blockquote>
+<p>因为java需要记录对象在内存中的位置啊，这个记录在对象头中，32位机器对象头默认占了8个字节(内存指针+kclass)，4字节&#x3D;4*8&#x3D;32位&#x3D;4G，但是Java使用的是压缩指针不是12345这样记录的，是0，8，16这样记录的，所以8字节的对象头最大记录内存地址32G如果超过32G就需要更大的对象头记录位置和kclass，可以想象超过32G之后对象头占用内存那么多不值得，所以31G最优。</p>
+</blockquote>
+<p><strong>压缩指针是怎么实现的</strong></p>
+<blockquote>
+<p>不再保存所有引用，而是每隔8个字节保存一个引用。例如，原来保存每个引用0、1、2…，现在只保存0、8、16…。因此，指针压缩后，并不是所有引用都保存在堆中，而是以8个字节为间隔保存引用。在实现上，堆中的引用其实还是按照0x0、0x1、0x2…进行存储。只不过当引用被存入64位的寄存器时，JVM将其左移3位（相当于末尾添加3个0），例如0x0、0x1、0x2…分别被转换为0x0、0x8、0x10。而当从寄存器读出时，JVM又可以右移3位，丢弃末尾的0。（oop在堆中是32位，在寄存器中是35位，2的35次方&#x3D;32G。也就是说，使用32位，来达到35位oop所能引用的堆内存空间）</p>
+</blockquote>
+<h3 id="3-ES部署原则"><a href="#3-ES部署原则" class="headerlink" title="3.ES部署原则"></a>3.ES部署原则</h3><ul>
+<li>【强制】开启内存锁，禁止swapping</li>
+<li>【强制】文件描述符数量调整至65536</li>
+<li>【强制】最大映射数调整至262144</li>
+<li>【强制】重要数据至少有一个副本。</li>
+<li>【强制】主分片和副本分片不能在同一个物理机上</li>
+<li>【强制】部署最后严格划分ES节点角色</li>
+<li>【强制】添加快照任务</li>
+<li>【建议】使用RestClient连接</li>
+<li>【强制】读连接client节点，写连接data节点。</li>
+<li>【强制】连接时，必须配置上所有的对应节点，避免单节点配置。</li>
+</ul>
+<h3 id="4-ES索引模板设计原则"><a href="#4-ES索引模板设计原则" class="headerlink" title="4.ES索引模板设计原则"></a>4.ES索引模板设计原则</h3><ul>
+<li>【建议】设置索引的refresh_interval，默认1s建议调至60s减少写入压力</li>
+<li>【强制】禁止不使用的字段存入Elasticsearch</li>
+<li>【强制】不作为查询字段的index值设置为false</li>
+<li>【强制】不允许_all字段（7.5.1版本不再支持）</li>
+<li>【强制】禁止es自动创建字段，防止索引结构混乱字段。dynamic属性设置为false遇到陌生字段，就忽略；strict：遇到陌生字段，就报错</li>
+<li>【强制】索引的分片数在一个节点上不超过3个，每个分片数量不超过30G</li>
+<li>【强制】对于大表必须设置分月或分天，一般为单个索引不超过100G</li>
+<li>【强制】数据必须有对应的生命周期，禁止永久保存，且周期性数据存储最长为6个月</li>
+<li>【强制】必须开启副本</li>
+<li>【强制】禁止不需要排序和聚合的字段doc_values属性设置为true</li>
+<li>【强制】表结构字段不超过50个</li>
+<li>【强制】不允许使用type，一个索引只存储一种结构（7.5.1版本不再支持type）</li>
+<li>【强制】index_patterns只允许包含一种索引模式</li>
+<li>【强制】禁止keyword类型字段超过256个字符，默认超过256个字符不会被索引</li>
+</ul>
+<h3 id="5-ES读写规范"><a href="#5-ES读写规范" class="headerlink" title="5.ES读写规范"></a>5.ES读写规范</h3><ul>
+<li>【建议】建议使用match_phrase替代match提高查询性能</li>
+<li>【建议】善用filter过滤器，过滤适合在大范围筛选数据，而查询则适合精确匹配数据。一般应用时，应先使用过滤操作过滤数据，然后使用查询匹配数据</li>
+<li>【建议】善用路由routing，极大提升查询效率</li>
+<li>【建议】大量数据提交时使用批量提交方法</li>
+<li>【建议】不得一次超大返回结果上限为100条，应需分页查询。具体实际限制根据集群规模</li>
+<li>【建议】单个查询条件字数长度不得超过30字</li>
+<li>【建议】尽量少使用delete_by_query删除文档，更好的方案是直接删除索引</li>
+<li>【建议】使用 datastrem 和 ILM 索引生命周期管理管理时序数据</li>
+<li>【建议】分片大小控制在 10GB-50GB</li>
+<li>【建议】控制在每 GB 堆内存 20 个分片以内，避免单个节点分片过多、负载过重</li>
+<li>【建议】增加字段限制，避免mapping爆炸</li>
+<li>【强制】不能使用index*的操作，同时跨多个es索引进行查询，会严重消耗es性能，建议单次查询不跨索引查询，跨索引查询不得超过3个</li>
+<li>【强制】设置查询所使用字段和返回结果列，查询结果返回不能超过1万条，数据量过大会导致es堆内存溢出</li>
+<li>【强制】查询条件不能超过10K，条件过大会导致查询缓慢和es栈内存溢出</li>
+<li>【强制】禁止使用前缀wildcards查询。</li>
+<li>【强制】查询条件禁止超过1024个。</li>
+<li>【强制】ES不支持事务性读写操作。</li>
+<li>【强制】避免内嵌查询。</li>
+<li>【强制，使用请进行评审】避免聚合查询。</li>
+<li>【强制】避免使用from和size深度分页，可以考虑使用searchAfter来实现。</li>
+<li>【强制】ES本身不支持事务！！！！</li>
+</ul>
+<h3 id="6-ES慢查询日志"><a href="#6-ES慢查询日志" class="headerlink" title="6.ES慢查询日志"></a>6.ES慢查询日志</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs json"># index数据的慢日志   <br>PUT /you index name/_settings<br><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;index.indexing.slowlog.threshold.index.warn&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;10s&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.indexing.slowlog.threshold.index.info&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;5s&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.indexing.slowlog.threshold.index.debug&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2s&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.indexing.slowlog.threshold.index.trace&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;500ms&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.indexing.slowlog.level&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;info&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.indexing.slowlog.source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;1000&quot;</span><br><span class="hljs-punctuation">&#125;</span><br># search数据的慢日志    查询分为fetch和query，fetch先查出来id和score，再根据id查找全文，根据score排序。就像数据库的回表一样。索引fetch会较慢一些<br>PUT /you index name/_settings<br><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;index.search.slowlog.threshold.query.warn&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;10s&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.search.slowlog.threshold.query.info&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;5s&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.search.slowlog.threshold.query.debug&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2s&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.search.slowlog.threshold.query.trace&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;500ms&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.search.slowlog.threshold.fetch.warn&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;1s&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.search.slowlog.threshold.fetch.info&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;800ms&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.search.slowlog.threshold.fetch.debug&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;500ms&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.search.slowlog.threshold.fetch.trace&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;200ms&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;index.search.slowlog.level&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;info&quot;</span><br><span class="hljs-punctuation">&#125;</span><br># 查看慢日志所在位置<br>GET _nodes/settings?pretty=<span class="hljs-literal"><span class="hljs-keyword">true</span></span><br><br># 可以通过logstash将慢查询日志收集进ES中，然后进行分析<br># 注：docker安装ES，会出现日志只输出控制台，不写入文件的情况，请自定义配置log4j2.properties文件<br></code></pre></td></tr></table></figure>
+
+<h3 id="7-ES索引新增字段"><a href="#7-ES索引新增字段" class="headerlink" title="7.ES索引新增字段"></a>7.ES索引新增字段</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash">PUT user_order_2010（表名）/_mapping<br>&#123;<br>   <span class="hljs-string">&quot;properties&quot;</span>:&#123;    //新增字段combineOrderNumber<br>       <span class="hljs-string">&quot;combineOrderNumber&quot;</span>: &#123;<br>           <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;keyword&quot;</span><br>        &#125;<br>    &#125;<br>&#125;<br>curl -X PUT http://127.0.0.1:9200/user_order_2010/_mapping -H <span class="hljs-string">&#x27;Content-Type: application/json&#x27;</span>  -d <span class="hljs-string">&#x27;&#123;</span><br><span class="hljs-string">   &quot;properties&quot;:&#123;    //新增字段combineOrderNumber</span><br><span class="hljs-string">       &quot;combineOrderNumber&quot;: &#123;</span><br><span class="hljs-string">           &quot;type&quot;: &quot;keyword&quot;</span><br><span class="hljs-string">        &#125;</span><br><span class="hljs-string">    &#125;</span><br><span class="hljs-string">&#125;&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="8-Docker安装ES及相关技术栈"><a href="#8-Docker安装ES及相关技术栈" class="headerlink" title="8.Docker安装ES及相关技术栈"></a>8.Docker安装ES及相关技术栈</h3><p>注：如果是wsl中部署，存在ip地址重启之后变动的情况请使用网桥模式，将相关组件全使用一个网桥，通过docker 容器名称连接。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 拉取镜像</span><br>docker pull elasticsearch:7.6.1<br>docker pull kibana:7.6.1<br><span class="hljs-comment"># 创建文件夹</span><br><span class="hljs-built_in">mkdir</span> -p /mydata/elasticsearch/config<br><span class="hljs-built_in">mkdir</span> -p /mydata/elasticsearch/data<br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;http.host: 0.0.0.0&quot;</span> &gt;/mydata/elasticsearch/config/elasticsearch.yml<br><span class="hljs-built_in">mkdir</span> -p /mydata/elasticsearch/kibana/config/<br>vim  /mydata/elasticsearch/kibana/config/kibana.yml<br><span class="hljs-built_in">chmod</span> -R  777 /mydata/elasticsearch/config<br><span class="hljs-built_in">chmod</span> -R  777  /mydata/elasticsearch/data<br><span class="hljs-built_in">chmod</span> -R  777  /mydata/elasticsearch/kibana/config/<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment">#kibana.yaml</span><br><span class="hljs-attr">server.name:</span> <span class="hljs-string">kibana</span><br><span class="hljs-attr">server.host:</span> <span class="hljs-string">&quot;0&quot;</span><br><span class="hljs-attr">elasticsearch.hosts:</span> [ <span class="hljs-string">&quot;http://192.168.170.132:9200&quot;</span> ]  <span class="hljs-comment"># 根据自己情况选择是否使--network=es-network [[ &quot;http://es容器名称:9200&quot; ]]</span><br><span class="hljs-attr">xpack.monitoring.ui.container.elasticsearch.enabled:</span> <span class="hljs-literal">true</span><br><span class="hljs-attr">i18n.locale:</span> <span class="hljs-string">&quot;zh-CN&quot;</span><br><span class="hljs-comment">#密码</span><br><span class="hljs-attr">elasticsearch.username:</span> <span class="hljs-string">&quot;elastic&quot;</span><br><span class="hljs-attr">elasticsearch.password:</span> <span class="hljs-string">&quot;passwd&quot;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># elasticsearch.yml 高版本增加如下</span><br><span class="hljs-attr">http.host:</span> <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span><br><span class="hljs-attr">cluster.name:</span> <span class="hljs-string">&quot;docker-cluster&quot;</span><br><span class="hljs-attr">network.hosts:</span> <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span><br><span class="hljs-comment"># 跨域</span><br><span class="hljs-attr">http.cors.allow-origin:</span> <span class="hljs-string">&quot;*&quot;</span><br><span class="hljs-attr">http.cors.enabled:</span> <span class="hljs-literal">true</span><br><span class="hljs-attr">http.cors.allow-headers:</span> <span class="hljs-string">Authorization,X-Requested-With,Content-Length,Content-Type</span><br><span class="hljs-comment"># 密码</span><br><span class="hljs-attr">xpack.security.enabled:</span> <span class="hljs-literal">true</span><br><span class="hljs-attr">xpack.license.self_generated.type:</span> <span class="hljs-string">basic</span><br><span class="hljs-attr">xpack.security.transport.ssl.enabled:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-comment"># 启动ES 根据自己情况选择是否使用网桥 --network=es-network </span><br>docker run --name elasticsearch -p <span class="hljs-number">9200</span>:<span class="hljs-number">9200</span> -p <span class="hljs-number">9300</span>:<span class="hljs-number">9300</span> -e <span class="hljs-string">&quot;discovery.type=single-node&quot;</span> -e ES_JAVA_OPTS=<span class="hljs-string">&quot;-Xms64m -Xmx512m&quot;</span> -v <span class="hljs-regexp">/mydata/</span>elasticsearch<span class="hljs-regexp">/config/</span>elasticsearch.yml:<span class="hljs-regexp">/usr/</span>share<span class="hljs-regexp">/elasticsearch/</span>config<span class="hljs-regexp">/elasticsearch.yml -v /my</span>data<span class="hljs-regexp">/elasticsearch/</span>data:<span class="hljs-regexp">/usr/</span>share<span class="hljs-regexp">/elasticsearch/</span>data -v <span class="hljs-regexp">/mydata/</span>elasticsearch<span class="hljs-regexp">/plugins:/u</span>sr<span class="hljs-regexp">/share/</span>elasticsearch/plugins -d elasticsearch:<span class="hljs-number">7.6</span>.<span class="hljs-number">1</span><br><br><span class="hljs-comment"># 启动kibana 根据自己情况选择是否使用网桥 --network=es-network </span><br>docker run -d   --name=kibana   --restart=always   -p <span class="hljs-number">5601</span>:<span class="hljs-number">5601</span>   -v <span class="hljs-regexp">/mydata/</span>elasticsearch<span class="hljs-regexp">/kibana/</span>config<span class="hljs-regexp">/kibana.yml:/u</span>sr<span class="hljs-regexp">/share/</span>kibana<span class="hljs-regexp">/config/</span>kibana.yml   kibana:<span class="hljs-number">7.6</span>.<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>docker 部署metricbea</strong>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker pull docker.elastic.co/beats/metricbeat:7.10.1<br>vim /mydata/elasticsearch/metricbeat/metricbeat.yml   <span class="hljs-comment"># 注意不能给777，给755</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">metricbeat.config:</span><br>  <span class="hljs-attr">modules:</span><br>    <span class="hljs-attr">path:</span> <span class="hljs-string">$&#123;path.config&#125;/modules.d/*.yml</span><br>    <span class="hljs-comment"># Reload module configs as they change:</span><br>    <span class="hljs-attr">reload.enabled:</span> <span class="hljs-literal">false</span><br><span class="hljs-attr">metricbeat.autodiscover:</span><br>  <span class="hljs-attr">providers:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">type:</span> <span class="hljs-string">docker</span><br>      <span class="hljs-attr">hints.enabled:</span> <span class="hljs-literal">true</span><br><span class="hljs-attr">metricbeat.modules:</span>    <br><span class="hljs-bullet">-</span> <span class="hljs-attr">module:</span> <span class="hljs-string">elasticsearch</span>       <span class="hljs-comment"># 开启elasticsearch</span><br>  <span class="hljs-attr">xpack.enabled:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">period:</span> <span class="hljs-string">10s</span><br>  <span class="hljs-attr">hosts:</span> [<span class="hljs-string">&quot;http://elasticsearch:9200&quot;</span>]  <span class="hljs-comment"># 跨容器交互使用桥接</span><br><span class="hljs-bullet">-</span> <span class="hljs-attr">module:</span> <span class="hljs-string">docker</span><br>  <span class="hljs-attr">metricsets:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;container&quot;</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;cpu&quot;</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;diskio&quot;</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;healthcheck&quot;</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;info&quot;</span><br>    <span class="hljs-comment">#- &quot;image&quot;</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;memory&quot;</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;network&quot;</span><br>  <span class="hljs-attr">hosts:</span> [<span class="hljs-string">&quot;unix:///var/run/docker.sock&quot;</span>] <br>  <span class="hljs-attr">period:</span> <span class="hljs-string">10s</span><br>  <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span><br><span class="hljs-attr">processors:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">add_cloud_metadata:</span> <span class="hljs-string">~</span><br><span class="hljs-comment"># 直接发送elasticsearch</span><br><span class="hljs-attr">output.elasticsearch:</span><br>  <span class="hljs-attr">hosts:</span> [<span class="hljs-string">&quot;elasticsearch:9200&quot;</span>]   <span class="hljs-comment"># 跨容器交互使用桥接</span><br><br><span class="hljs-comment"># 要加载仪表板，可以在metricbeat设置中启用仪表板加载。当仪表板加载被启用时，Metricbeat使用Kibana API来加载样本仪表板。只有当Metricbeat启动时，才会尝试仪表板加载。</span><br><span class="hljs-comment"># 设置kibana服务地址</span><br><span class="hljs-attr">setup.kibana.host:</span> <span class="hljs-string">&quot;kibana:5601&quot;</span> <span class="hljs-comment"># 跨容器交互使用桥接</span><br><span class="hljs-comment"># 加载默认的仪表盘样式</span><br><span class="hljs-attr">setup.dashboards.enabled:</span> <span class="hljs-literal">true</span><br><span class="hljs-comment"># 设置如果存在模板，则不覆盖原有模板</span><br><span class="hljs-attr">setup.template.overwrite:</span> <span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-comment"># 根据自己情况选择是否使用网桥</span><br>docker <span class="hljs-built_in">run</span> -d <span class="hljs-attribute">--network</span>=es-network <span class="hljs-attribute">--name</span>=metricbeat \<br><span class="hljs-attribute">--user</span>=root <span class="hljs-attribute">--volume</span>=<span class="hljs-string">&quot;<span class="hljs-variable">$(pwd)</span>/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro&quot;</span> \<br><span class="hljs-attribute">--volume</span>=<span class="hljs-string">&quot;/var/run/docker.sock:/var/run/docker.sock:ro&quot;</span>\<br><span class="hljs-attribute">--volume</span>=<span class="hljs-string">&quot;/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro&quot;</span> \<br><span class="hljs-attribute">--volume</span>=<span class="hljs-string">&quot;/proc:/hostfs/proc:ro&quot;</span> <span class="hljs-attribute">--volume</span>=<span class="hljs-string">&quot;/:/hostfs:ro&quot;</span> \<br>docker.elastic.co/beats/metricbeat:7.10.1 metricbeat -e<br></code></pre></td></tr></table></figure>
+
+<h3 id="9-ES修复log4j2-bug"><a href="#9-ES修复log4j2-bug" class="headerlink" title="9.ES修复log4j2 bug"></a>9.ES修复log4j2 bug</h3><ol>
+<li>关闭ES集群</li>
+<li>备份 elasticsearch 目录下lib下的 log4j-api-2.11.1.jar和log4j-core-2.11.1.jar</li>
+<li>cd &#x2F;xxx&#x2F;xxxx&#x2F;elasticsearch&#x2F;lib</li>
+<li>mkdir log_bak</li>
+<li>mv log4j* .&#x2F;log_bak</li>
+<li>上传log4j-core-2.17.0.jar 和 log4j-api-2.17.0.jar 到 lib目录下</li>
+<li>启动ES集群</li>
+</ol>
+<h3 id="10-ES监控dashboard"><a href="#10-ES监控dashboard" class="headerlink" title="10.ES监控dashboard"></a>10.ES监控dashboard</h3><p>1.python收集脚本如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/env python</span><br><span class="hljs-keyword">import</span> datetime<br><span class="hljs-keyword">import</span> time<br><span class="hljs-keyword">import</span> json<br><span class="hljs-keyword">import</span> urllib2<br><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">import</span> sys<br><br><span class="hljs-comment"># ElasticSearch Cluster to Monitor</span><br><span class="hljs-comment">#elasticServer = os.environ.get(&#x27;ES_METRICS_CLUSTER_URL&#x27;, &#x27;http://192.168.2.13:9200&#x27;)</span><br><span class="hljs-comment">#interval = int(os.environ.get(&#x27;ES_METRICS_INTERVAL&#x27;, &#x27;60&#x27;))</span><br><br>elasticServer = <span class="hljs-string">&#x27;http://192.168.2.13:9200&#x27;</span><br>interval = <span class="hljs-number">60</span><br><span class="hljs-comment"># ElasticSearch Cluster to Send Metrics</span><br><span class="hljs-comment">#elasticIndex = os.environ.get(&#x27;ES_METRICS_INDEX_NAME&#x27;, &#x27;elasticsearch_metrics&#x27;)</span><br><span class="hljs-comment">#elasticMonitoringCluster = os.environ.get(&#x27;ES_METRICS_MONITORING_CLUSTER_URL&#x27;, &#x27;http://192.168.2.13:9200&#x27;)</span><br><br>elasticIndex = <span class="hljs-string">&#x27;elasticsearch_metrics&#x27;</span><br>elasticMonitoringCluster = <span class="hljs-string">&#x27;http://192.168.2.13:9200&#x27;</span><br><span class="hljs-comment"># Enable Elasticsearch Security</span><br><span class="hljs-comment"># read_username and read_password for read ES cluster information</span><br><span class="hljs-comment"># write_username and write_passowrd for write monitor metric to ES.</span><br>read_es_security_enable = <span class="hljs-literal">False</span><br>read_username = <span class="hljs-string">&quot;read_username&quot;</span><br>read_password = <span class="hljs-string">&quot;read_password&quot;</span><br><br>write_es_security_enable = <span class="hljs-literal">False</span><br>write_username = <span class="hljs-string">&quot;write_username&quot;</span><br>write_password = <span class="hljs-string">&quot;write_password&quot;</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_urlopen</span>(<span class="hljs-params">urlData, read_username, read_password</span>):<br>    <span class="hljs-keyword">if</span> read_es_security_enable: <br>      <span class="hljs-keyword">try</span>:<br>	password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()<br>        password_mgr.add_password(<span class="hljs-literal">None</span>, urlData, read_username, read_password)<br>        handler = urllib2.HTTPBasicAuthHandler(password_mgr)<br>        opener = urllib2.build_opener(handler)<br>        urllib2.install_opener(opener)<br>        response = urllib2.urlopen(urlData)<br>	<span class="hljs-keyword">return</span> response<br>      <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>        <span class="hljs-built_in">print</span> <span class="hljs-string">&quot;Error:  &#123;0&#125;&quot;</span>.<span class="hljs-built_in">format</span>(<span class="hljs-built_in">str</span>(e))<br>    <span class="hljs-keyword">else</span>:<br>      <span class="hljs-keyword">try</span>:<br>        response = urllib2.urlopen(urlData)<br>        <span class="hljs-keyword">return</span> response<br>      <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>        <span class="hljs-built_in">print</span> <span class="hljs-string">&quot;Error:  &#123;0&#125;&quot;</span>.<span class="hljs-built_in">format</span>(<span class="hljs-built_in">str</span>(e))<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">fetch_clusterhealth</span>():<br>    <span class="hljs-keyword">try</span>:<br>        utc_datetime = datetime.datetime.utcnow()<br>        endpoint = <span class="hljs-string">&quot;/_cluster/health&quot;</span><br>        urlData = elasticServer + endpoint<br>        response = handle_urlopen(urlData,read_username,read_password)<br>        jsonData = json.loads(response.read())<br>        clusterName = jsonData[<span class="hljs-string">&#x27;cluster_name&#x27;</span>]<br>        jsonData[<span class="hljs-string">&#x27;@timestamp&#x27;</span>] = <span class="hljs-built_in">str</span>(utc_datetime.strftime(<span class="hljs-string">&#x27;%Y-%m-%dT%H:%M:%S.%f&#x27;</span>)[:-<span class="hljs-number">3</span>])<br>        <span class="hljs-keyword">if</span> jsonData[<span class="hljs-string">&#x27;status&#x27;</span>] == <span class="hljs-string">&#x27;green&#x27;</span>:<br>            jsonData[<span class="hljs-string">&#x27;status_code&#x27;</span>] = <span class="hljs-number">0</span><br>        <span class="hljs-keyword">elif</span> jsonData[<span class="hljs-string">&#x27;status&#x27;</span>] == <span class="hljs-string">&#x27;yellow&#x27;</span>:<br>            jsonData[<span class="hljs-string">&#x27;status_code&#x27;</span>] = <span class="hljs-number">1</span><br>        <span class="hljs-keyword">elif</span> jsonData[<span class="hljs-string">&#x27;status&#x27;</span>] == <span class="hljs-string">&#x27;red&#x27;</span>:<br>            jsonData[<span class="hljs-string">&#x27;status_code&#x27;</span>] = <span class="hljs-number">2</span><br>        post_data(jsonData)<br>        <span class="hljs-keyword">return</span> clusterName<br>    <span class="hljs-keyword">except</span> IOError <span class="hljs-keyword">as</span> err:<br>        <span class="hljs-built_in">print</span> <span class="hljs-string">&quot;IOError: Maybe can&#x27;t connect to elasticsearch.&quot;</span><br>        clusterName = <span class="hljs-string">&quot;unknown&quot;</span><br>        <span class="hljs-keyword">return</span> clusterName<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">fetch_clusterstats</span>():<br>    utc_datetime = datetime.datetime.utcnow()<br>    endpoint = <span class="hljs-string">&quot;/_cluster/stats&quot;</span><br>    urlData = elasticServer + endpoint<br>    response = handle_urlopen(urlData,read_username,read_password)<br>    jsonData = json.loads(response.read())<br>    jsonData[<span class="hljs-string">&#x27;@timestamp&#x27;</span>] = <span class="hljs-built_in">str</span>(utc_datetime.strftime(<span class="hljs-string">&#x27;%Y-%m-%dT%H:%M:%S.%f&#x27;</span>)[:-<span class="hljs-number">3</span>])<br>    post_data(jsonData)<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">fetch_nodestats</span>(<span class="hljs-params">clusterName</span>):<br>    utc_datetime = datetime.datetime.utcnow()<br>    endpoint = <span class="hljs-string">&quot;/_cat/nodes?v&amp;h=n&quot;</span><br>    urlData = elasticServer + endpoint<br>    response = handle_urlopen(urlData,read_username,read_password)<br>    nodes = response.read()[<span class="hljs-number">1</span>:-<span class="hljs-number">1</span>].strip().split(<span class="hljs-string">&#x27;\n&#x27;</span>)<br>    <span class="hljs-keyword">for</span> node <span class="hljs-keyword">in</span> nodes:<br>        endpoint = <span class="hljs-string">&quot;/_nodes/%s/stats&quot;</span> % node.rstrip()<br>        urlData = elasticServer + endpoint<br>        response = handle_urlopen(urlData,read_username,read_password)<br>        jsonData = json.loads(response.read())<br>        nodeID = jsonData[<span class="hljs-string">&#x27;nodes&#x27;</span>].keys()<br>        <span class="hljs-keyword">try</span>:<br>            jsonData[<span class="hljs-string">&#x27;nodes&#x27;</span>][nodeID[<span class="hljs-number">0</span>]][<span class="hljs-string">&#x27;@timestamp&#x27;</span>] = <span class="hljs-built_in">str</span>(utc_datetime.strftime(<span class="hljs-string">&#x27;%Y-%m-%dT%H:%M:%S.%f&#x27;</span>)[:-<span class="hljs-number">3</span>])<br>            jsonData[<span class="hljs-string">&#x27;nodes&#x27;</span>][nodeID[<span class="hljs-number">0</span>]][<span class="hljs-string">&#x27;cluster_name&#x27;</span>] = clusterName<br>            newJsonData = jsonData[<span class="hljs-string">&#x27;nodes&#x27;</span>][nodeID[<span class="hljs-number">0</span>]]<br>            post_data(newJsonData)<br>        <span class="hljs-keyword">except</span>:<br>            <span class="hljs-keyword">continue</span><br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">fetch_indexstats</span>(<span class="hljs-params">clusterName</span>):<br>    utc_datetime = datetime.datetime.utcnow()<br>    endpoint = <span class="hljs-string">&quot;/_stats&quot;</span><br>    urlData = elasticServer + endpoint<br>    response = handle_urlopen(urlData,read_username,read_password)<br>    jsonData = json.loads(response.read())<br>    jsonData[<span class="hljs-string">&#x27;_all&#x27;</span>][<span class="hljs-string">&#x27;@timestamp&#x27;</span>] = <span class="hljs-built_in">str</span>(utc_datetime.strftime(<span class="hljs-string">&#x27;%Y-%m-%dT%H:%M:%S.%f&#x27;</span>)[:-<span class="hljs-number">3</span>])<br>    jsonData[<span class="hljs-string">&#x27;_all&#x27;</span>][<span class="hljs-string">&#x27;cluster_name&#x27;</span>] = clusterName<br>    post_data(jsonData[<span class="hljs-string">&#x27;_all&#x27;</span>])<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">post_data</span>(<span class="hljs-params">data</span>):<br>    utc_datetime = datetime.datetime.utcnow()<br>    url_parameters = &#123;<span class="hljs-string">&#x27;cluster&#x27;</span>: elasticMonitoringCluster, <span class="hljs-string">&#x27;index&#x27;</span>: elasticIndex,<br>        <span class="hljs-string">&#x27;index_period&#x27;</span>: utc_datetime.strftime(<span class="hljs-string">&quot;%Y.%m.%d&quot;</span>), &#125;<br>    url = <span class="hljs-string">&quot;%(cluster)s/%(index)s-%(index_period)s/message&quot;</span> % url_parameters<br>    headers = &#123;<span class="hljs-string">&#x27;content-type&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span>&#125;<br>    <span class="hljs-keyword">try</span>:<br>        req = urllib2.Request(url, headers=headers, data=json.dumps(data))<br>        <span class="hljs-keyword">if</span> write_es_security_enable:<br>            password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()<br>            password_mgr.add_password(<span class="hljs-literal">None</span>, url, write_username, write_password)<br>            handler = urllib2.HTTPBasicAuthHandler(password_mgr)<br>            opener = urllib2.build_opener(handler)<br>            urllib2.install_opener(opener)<br>            response = urllib2.urlopen(req)<br>        <span class="hljs-keyword">else</span>:<br>            response = urllib2.urlopen(req)<br>    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>        <span class="hljs-built_in">print</span> <span class="hljs-string">&quot;Error:  &#123;0&#125;&quot;</span>.<span class="hljs-built_in">format</span>(<span class="hljs-built_in">str</span>(e))<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">main</span>():<br>    clusterName = fetch_clusterhealth()<br>    <span class="hljs-built_in">print</span>(clusterName)<br>    <span class="hljs-keyword">if</span> clusterName != <span class="hljs-string">&quot;unknown&quot;</span>:<br>        fetch_clusterstats()<br>        fetch_nodestats(clusterName)<br>        fetch_indexstats(clusterName)<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    <span class="hljs-keyword">try</span>:<br>        nextRun = <span class="hljs-number">0</span><br>        <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>            <span class="hljs-keyword">if</span> time.time() &gt;= nextRun:<br>                nextRun = time.time() + interval<br>                now = time.time()<br>                main()<br>                elapsed = time.time() - now<br>                <span class="hljs-built_in">print</span> <span class="hljs-string">&quot;Total Elapsed Time: %s&quot;</span> % elapsed<br>                timeDiff = nextRun - time.time()<br><br>                <span class="hljs-comment"># Check timediff , if timediff &gt;=0 sleep, if &lt; 0 send metrics to es</span><br>                <span class="hljs-keyword">if</span> timeDiff &gt;= <span class="hljs-number">0</span>:<br>                    time.sleep(timeDiff)<br><br>    <span class="hljs-keyword">except</span> KeyboardInterrupt:<br>        <span class="hljs-built_in">print</span> <span class="hljs-string">&#x27;Interrupted&#x27;</span><br>        <span class="hljs-keyword">try</span>:<br>            sys.exit(<span class="hljs-number">0</span>)<br>        <span class="hljs-keyword">except</span> SystemExit:<br>            os._exit(<span class="hljs-number">0</span>)<br></code></pre></td></tr></table></figure>
+
+<p>2.服务启动脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br>nohup python2 ./elasticsearch2elastic.py &gt; ./elastic.log 2&gt;&amp;1 &amp;<br></code></pre></td></tr></table></figure>
+
+<p>3.服务停止脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">! /bin/shell</span><br>appName=&#x27;elasticsearch2elastic.py&#x27;<br>pid=$(ps -ef | grep $&#123;appName&#125; | grep -v grep | awk  &#x27;&#123;print $2&#125;&#x27;)<br>echo -e $pid<br><br>kill -9 $&#123;pid&#125;<br>sleep 2<br>if [ $? -eq 0 ];then<br>    echo &quot;kill $&#123;appName&#125; success...&quot;<br>else<br>    echo &quot;kill $&#123;appName&#125; fail&quot;<br>fi<br></code></pre></td></tr></table></figure>
+
+<p>4.索引清理脚本-shell</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br>ES_IP=10.0.0.73<br>ES_PORT=9200<br>INDEX_PREFIX=&#x27;elasticsearch_metrics-&#x27;<br>INDEX_SUFF=&#x27;*&#x27;<br>DATE_MONTH=`date -d &quot;1 month ago&quot; +%Y.%m`<br>INDEX_NAME=$&#123;INDEX_PREFIX&#125;$&#123;DATE_MONTH&#125;$&#123;INDEX_SUFF&#125;<br>ES_URL=http://$&#123;ES_IP&#125;:$&#123;ES_PORT&#125;/$&#123;INDEX_NAME&#125;<br>LOG_FILE=esindex_del-$&#123;DATE_MONTH&#125;.out<br>curl -XDELETE $&#123;ES_URL&#125; &gt;&gt; $&#123;LOG_FILE&#125;<br></code></pre></td></tr></table></figure>
+
+<p>5.索引清理脚本-python</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/env python</span><br><span class="hljs-comment"># -*- coding: UTF-8 -*-</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">@Project ：es-monitor</span><br><span class="hljs-string">@File    ：index_clear.py</span><br><span class="hljs-string">@IDE     ：PyCharm</span><br><span class="hljs-string">@Author  ：Suaf</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-keyword">import</span> datetime<br><span class="hljs-keyword">import</span> os<br><br>ES_PORT = <span class="hljs-string">&#x27;9200&#x27;</span><br>ES_IP = <span class="hljs-string">&#x27;10.0.0.73&#x27;</span><br>INDEX_PREFIX = <span class="hljs-string">&#x27;elasticsearch_metrics-&#x27;</span><br>INDEX_SUFF = <span class="hljs-string">&#x27;*&#x27;</span><br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">getLastMonth</span>():<br>    today = datetime.date.today()<br>    first = today.replace(day=<span class="hljs-number">1</span>)<br>    last_month = first - datetime.timedelta(days=<span class="hljs-number">1</span>)<br>    month = last_month.strftime(<span class="hljs-string">&quot;%Y.%m&quot;</span>)<br>    index_name = INDEX_PREFIX + month + INDEX_SUFF<br>    log_file = <span class="hljs-string">&#x27;esindex_del-&#x27;</span> + month + <span class="hljs-string">&#x27;.out&#x27;</span><br>    command = (<span class="hljs-string">&#x27;curl -XDELETE http://%s:%s/%s &gt; %s&#x27;</span>) % (ES_IP, ES_PORT, index_name, log_file)<br>    <span class="hljs-built_in">print</span>(command)<br>    os.system(command)<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    getLastMonth()<br></code></pre></td></tr></table></figure>
+
+<h3 id="11-IP转GeoIp"><a href="#11-IP转GeoIp" class="headerlink" title="11.IP转GeoIp"></a>11.IP转GeoIp</h3><blockquote>
+<p>GeoIp processor 根据来自 Maxmind 数据库的数据添加有关IP地址地理位置的信息。默认情况下，GeoIp processor 将此信息添加到 geoip 字段下。GeoIp processor 可以解析 IPv4 和 IPv6 地址。</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs json"># 创建一个预处理管道<br>PUT _ingest/pipeline/geoip_pipeline<br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;description&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Add geoip info&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;processors&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;geoip&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;field&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ip&quot;</span><br>      <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br><br># 创建一个索引<br># 考虑到后面要批量导入数千条+数据，我们采用了取巧的方式。使用了在创建索引的时候指定缺省管道（index.default_pipeline）的方式。<br># 这样的好处是：<br># 灵活：用户只关心 bulk 批量写入数据。<br># 零写入代码修改：甚至写入数据的代码一行都不需要改就可以。<br>PUT ip_index<br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;settings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;index.default_pipeline&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;geoip_pipeline&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;mappings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;geoip&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>          <span class="hljs-attr">&quot;location&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;geo_point&quot;</span><br>          <span class="hljs-punctuation">&#125;</span><br>        <span class="hljs-punctuation">&#125;</span><br>      <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;ip&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;keyword&quot;</span><br>      <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br># 写入一条数据<br>PUT ip_index/_doc/<span class="hljs-number">1</span><br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;ip&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;8.8.8.8&quot;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="12-ES存储深入了解"><a href="#12-ES存储深入了解" class="headerlink" title="12.ES存储深入了解"></a>12.ES存储深入了解</h3><p><strong>ES配置的目录：</strong></p>
+<ul>
+<li>path.home：运行Elasticsearch进程的用户的主目录。默认为Java系统属性user.dir，它是进程所有者的默认主目录</li>
+<li>path.conf：包含配置文件的目录。这通常通过设置Java系统属性es.config来设置，因为在找到配置文件之前它必然会被解析</li>
+<li>path.plugins：子文件夹为Elasticsearch插件的目录</li>
+<li>path.logs：存储生成的日志的位置。如果其中一个卷的磁盘空间不足，则将它放在与数据目录不同的卷上可能是有意义的</li>
+<li>path.data：包含Elasticsearch存储的数据的文件夹的路径(只看他)</li>
+</ul>
+<p><strong>文件从哪里来：</strong></p>
+<ul>
+<li>Lucene负责写和维护Lucene索引文件</li>
+<li>而Elasticsearch在Lucene之上写与功能相关的元数据，例如字段映射，索引设置和其他集群元数据。 最终用户和支持功能</li>
+<li>在低级Lucene中不存在，由Elasticsearch提供</li>
+</ul>
+<p><strong>文件结构：</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs json">data<br>	|__ elasticsearch<br>					|__ nodes<br>							|__ <span class="hljs-number">0</span><br>								|__ _state<br>								|		|__ global<span class="hljs-number">-0.</span>st # 集群的全局元数据<br>								|__ node.lock  # 文件用于确保一次只能从一个数据目录读取/写入一个Elasticsearch相关安装信息<br>								|__ indices<br>										|__ <span class="hljs-number">45</span>aonVA8RPSlHSKGnK_yaA<br>											|__ <span class="hljs-number">0</span> # <span class="hljs-number">0</span>包含与索引的第一个（也是唯一的）分片相关的数据（分片<span class="hljs-number">0</span>）<br>											|	|__ _state<br>											|	|__ index #<br>											|	|__ translog # 每个分片的 事务日志<span class="hljs-punctuation">,</span>保可以安全地将数据索引到Elasticsearch<br>											|__ _state # 前者_state包含所谓的索引状态文件，存储索引的元数据<br>											<br>data/<br>└── nodes<br>    └── <span class="hljs-number">0</span><br>        ├── _state  # 集群的全局元数据<br>        ├── indices # 存储索引的目录<br>        │   ├── <span class="hljs-number">45</span>aonVA8RPSlHSKGnK_yaA # 索引唯一标识<br>        │   │   ├── <span class="hljs-number">0</span> # <span class="hljs-number">0</span>包含与索引的第一个（也是唯一的）分片相关的数据（分片<span class="hljs-number">0</span>）<br>        │   │   │   ├── _state # _state包含所谓的索引状态文件，存储索引的元数据<br>        │   │   │   │   ├── retention-leases<span class="hljs-number">-41.</span>st<br>        │   │   │   │   └── state<span class="hljs-number">-1.</span>st<br>        │   │   │   ├── index # 索引数据<br>        │   │   │   │   ├── _0.cfe<br>        │   │   │   │   ├── _0.cfs<br>        │   │   │   │   ├── _0.si<br>        │   │   │   │   ├── segments_3<br>        │   │   │   │   └── write.lock<br>        │   │   │   └── translog # 每个分片的 事务日志<span class="hljs-punctuation">,</span>保可以安全地将数据索引到Elasticsearch<br>        │   │   │       ├── translog<span class="hljs-number">-4.</span>tlog<br>        │   │   │       └── translog.ckp<br>        │   │   └── _state  #  索引的元数据，它的创建时间戳，它还包含唯一标识符以及索引的设置和映射<br>        │   │       └── state<span class="hljs-number">-5.</span>s<br>        └── node.lock  # 文件用于确保一次只能从一个数据目录读取/写入一个Elasticsearch相关安装信息<br></code></pre></td></tr></table></figure>
+
+<h3 id="13-ES查询出现数据量倒退问题"><a href="#13-ES查询出现数据量倒退问题" class="headerlink" title="13.ES查询出现数据量倒退问题"></a>13.ES查询出现数据量倒退问题</h3><p>两次查询数据量不一致，因为ES查询为了降低查询压力默认会轮询查询主分片与副本分片，但是主副本之间同步会存在同步时差，所以限制只查询主分片就会避免该问题出现，具体解决方式如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs json">GET /_search?preference=_primary    # preference查询偏好设置<br><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;query&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;match&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;elasticsearch&quot;</span><br>        <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br># searchRequest.preference(<span class="hljs-string">&quot;_primary&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>_primary: 指查询只在主分片中查询</li>
+<li>_primary_first： 指查询会先在主分片中查询，如果主分片找不到（挂了），就会在副本中查询</li>
+<li>_local:：指查询操作会优先在本地节点有的分片中查询，没有的话再在其它节点查询。</li>
+<li>__only_node：指在指定id的节点里面进行查询，如果该节点只有要查询索引的部分分片，就只在这部分分片中查找，所以查询结果可能不完整。如_only_node:123在节点id为123的节点中查询。</li>
+<li>_prefer_node：nodeid 优先在指定的节点上执行查询</li>
+<li>_shards:0,1,2,3,4：查询指定分片的数据</li>
+<li>Custom (string) value：用户自定义值，指在参数cluster.routing.allocation.awareness.attributes指定的值，如这个值设置为了zone，那么preference&#x3D;zone的话就在awareness.attributes&#x3D;zone*这样的节点搜索，如zone1、zone2</li>
+</ul>
+<h3 id="14-基于拼音和中文进行搜索"><a href="#14-基于拼音和中文进行搜索" class="headerlink" title="14.基于拼音和中文进行搜索"></a>14.基于拼音和中文进行搜索</h3><p>一般情况下，有些搜索需求是需要根据拼音和中文来搜索的，那么在elasticsearch中是如何来实现基于拼音来搜索的，可以通过elasticsearch-analysis-pinyin分析器来实现，那我们的需求：自定义一个分词器，即可以实现拼音搜索，也可以实现中文搜索。<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45248492/article/details/127810051?spm=1001.2101.3001.6650.2&utm_medium=distribute.pc_relevant.none-task-blog-2~default~AD_ESQUERY~yljh-2-127810051-blog-126437539.pc_relevant_landingrelevant&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~AD_ESQUERY~yljh-2-127810051-blog-126437539.pc_relevant_landingrelevant&utm_relevant_index=3">参考这里</a></p>
+<h4 id="14-1-安装拼音分词器Pinyin-Analysis-for-Elasticsearch"><a href="#14-1-安装拼音分词器Pinyin-Analysis-for-Elasticsearch" class="headerlink" title="14.1.安装拼音分词器Pinyin Analysis for Elasticsearch"></a>14.1.安装拼音分词器<a target="_blank" rel="noopener" href="https://github.com/medcl/elasticsearch-analysis-pinyin">Pinyin Analysis for Elasticsearch</a></h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">进入 es 的插件目录</span><br>cd /Users/suaofeng/Downloads/docker/elasticsearch/plugins<br><span class="hljs-meta prompt_"># </span><span class="language-bash">下载</span><br>wget https://github.com/medcl/elasticsearch-analysis-pinyin/releases/tag/v7.10.1# 新建目录<br>mkdir analysis-pinyin<br><span class="hljs-meta prompt_"># </span><span class="language-bash">解压</span><br>mv elasticsearch-analysis-pinyin-7.10.1.zip analysis-pinyin &amp;&amp; cd analysis-pinyin &amp;&amp; unzip elasticsearch-analysis-pinyin-7.10.1.zip &amp;&amp; rm -rvf elasticsearch-analysis-pinyin-7.10.1.zip<br>cd ../ &amp;&amp; chown -R es:es analysis-pinyin<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">启动es并测试,结果发现实现了拼音分词，但是这个不一定满足我们的需求，</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">比如没有中文了，单个的拼音(比如：wo)是没有什么用的，需要对拼音分词器进行定制化。</span><br>GET _analyze<br>&#123;<br>  &quot;text&quot;: [&quot;我是程序员&quot;]<br>  , &quot;analyzer&quot;: &quot;pinyin&quot;<br>&#125;<br><br>&#123;<br>  &quot;tokens&quot; : [<br>    &#123;<br>      &quot;token&quot; : &quot;wo&quot;,<br>      &quot;start_offset&quot; : 0,<br>      &quot;end_offset&quot; : 0,<br>      &quot;type&quot; : &quot;word&quot;,<br>      &quot;position&quot; : 0<br>    &#125;,<br>    &#123;<br>      &quot;token&quot; : &quot;wscxy&quot;,<br>      &quot;start_offset&quot; : 0,<br>      &quot;end_offset&quot; : 0,<br>      &quot;type&quot; : &quot;word&quot;,<br>      &quot;position&quot; : 0<br>    &#125;,<br>    &#123;<br>      &quot;token&quot; : &quot;shi&quot;,<br>      &quot;start_offset&quot; : 0,<br>      &quot;end_offset&quot; : 0,<br>      &quot;type&quot; : &quot;word&quot;,<br>      &quot;position&quot; : 1<br>    &#125;,<br>    &#123;<br>      &quot;token&quot; : &quot;cheng&quot;,<br>      &quot;start_offset&quot; : 0,<br>      &quot;end_offset&quot; : 0,<br>      &quot;type&quot; : &quot;word&quot;,<br>      &quot;position&quot; : 2<br>    &#125;,<br>    &#123;<br>      &quot;token&quot; : &quot;xu&quot;,<br>      &quot;start_offset&quot; : 0,<br>      &quot;end_offset&quot; : 0,<br>      &quot;type&quot; : &quot;word&quot;,<br>      &quot;position&quot; : 3<br>    &#125;,<br>    &#123;<br>      &quot;token&quot; : &quot;yuan&quot;,<br>      &quot;start_offset&quot; : 0,<br>      &quot;end_offset&quot; : 0,<br>      &quot;type&quot; : &quot;word&quot;,<br>      &quot;position&quot; : 4<br>    &#125;<br>  ]<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<h4 id="14-2-自定义分词器"><a href="#14-2-自定义分词器" class="headerlink" title="14.2.自定义分词器"></a>14.2.自定义分词器</h4><p>再次分析es分词的三个过程</p>
+<ul>
+<li>character filters： 用于在tokenizer之前对文本进行处理。比如：删除字符，替换字符等。</li>
+<li>tokenizer： 将文本按照一定的规则分成独立的token。即实现分词功能。</li>
+<li>tokenizer filter： 将tokenizer输出的词条做进一步的处理。比如： 同义词处理，大小写转换、移除停用词，拼音处理等。</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs json">PUT /test_pinyin<br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;settings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-comment">// 分析阶段的设置</span><br>    <span class="hljs-attr">&quot;analysis&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-comment">// 分析器设置</span><br>      <span class="hljs-attr">&quot;analyzer&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-comment">// 自定义分析器，在tokenizer阶段使用ik_max_word，在filter上使用py</span><br>        <span class="hljs-attr">&quot;custom_analyzer&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>          <span class="hljs-attr">&quot;tokenizer&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ik_max_word&quot;</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-attr">&quot;filter&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;custom_pinyin&quot;</span><br>        <span class="hljs-punctuation">&#125;</span><br>      <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-comment">// 由于不满足pinyin分词器的默认设置，所以我们基于pinyin</span><br>      <span class="hljs-comment">// 自定义了一个filter，叫custom_pinyin，其中修改了一些设置</span><br>      <span class="hljs-comment">// 这些设置可以在pinyin分词器官网找到</span><br>      <span class="hljs-attr">&quot;filter&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;custom_pinyin&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>          <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;pinyin&quot;</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-comment">// 不会这样分：刘德华 &gt; [liu, de, hua]</span><br>          <span class="hljs-attr">&quot;keep_full_pinyin&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span><br>          <span class="hljs-comment">// 这样分：刘德华 &gt; [liudehua]</span><br>          <span class="hljs-attr">&quot;keep_joined_full_pinyin&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>          <span class="hljs-comment">// 保留原始token（即中文）</span><br>          <span class="hljs-attr">&quot;keep_original&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>          <span class="hljs-comment">// 设置first_letter结果的最大长度，默认值：16</span><br>          <span class="hljs-attr">&quot;limit_first_letter_length&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">16</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-comment">// 当启用此选项时，将删除重复项以保存索引，例如：de的&gt; de，默认值：false，注意：位置相关查询可能受影响</span><br>          <span class="hljs-attr">&quot;remove_duplicated_term&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>          <span class="hljs-comment">// 如果非汉语字母是拼音，则将其拆分为单独的拼音术语，默认值：true，如：liudehuaalibaba13zhuanghan- &gt; liu，de，hua，a，li，ba，ba，13，zhuang，han，注意：keep_none_chinese和keep_none_chinese_together应首先启用</span><br>          <span class="hljs-attr">&quot;none_chinese_pinyin_tokenize&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br>        <span class="hljs-punctuation">&#125;</span><br>      <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-comment">// 定义mapping</span><br>  <span class="hljs-attr">&quot;mappings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;text&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-comment">// 创建倒排索引时使用的分词器</span><br>        <span class="hljs-attr">&quot;analyzer&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;custom_analyzer&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-comment">// 搜索时使用的分词器，搜索时不使用custom_analyzer是为了防止 词语的拼音一样，但是中文含义不一样，导致搜索错误。 比如： 科技 和 客机，拼音一样，但是含义不一样</span><br>        <span class="hljs-attr">&quot;search_analyzer&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ik_smart&quot;</span><br>      <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+<p><strong>注意：</strong><br>可以看到 我们的 name字段 使用的分词器是 custom_analyzer，这个是我们在上一步定义的。但是搜索的时候使用的是 ik_smart，这个为甚么会这样呢？<br>假设我们存在如下2个文本 科技强国和 这是一架客机， 那么科技和客机的拼音是不是就是一样的。 这个时候如果搜索时使用的分词器也是custom_analyzer那么，搜索科技的时候客机也会搜索出来，这样是不对的。因此在搜索的时候中文就以中文搜，拼音就以拼音搜。当 analyzer和search_analyzer的值都是custom_analyzer，搜索时也会通过拼音搜索，这样的结果可能就不是我们想要的。</p>
+<p><strong>关于拼音分词器的一些可选配置：</strong><br>The plugin includes analyzer: pinyin , tokenizer: pinyin and token-filter: pinyin.</p>
+<ul>
+<li>keep_first_letter when this option enabled, eg: 刘德华&gt;ldh, default: true</li>
+<li>keep_separate_first_letter when this option enabled, will keep first letters separately, eg: 刘德华&gt;l,d,h, default: false, NOTE: query result maybe too fuzziness due to term too frequency</li>
+<li>limit_first_letter_length set max length of the first_letter result, default: 16</li>
+<li>keep_full_pinyin when this option enabled, eg: 刘德华&gt; [liu,de,hua], default: true</li>
+<li>keep_joined_full_pinyin when this option enabled, eg: 刘德华&gt; [liudehua], default: false</li>
+<li>keep_none_chinese keep non chinese letter or number in result, default: true</li>
+<li>keep_none_chinese_together keep non chinese letter together, default: true, eg: DJ音乐家 -&gt; DJ,yin,yue,jia, when set to false, eg: DJ音乐家 -&gt; D,J,yin,yue,jia, NOTE: keep_none_chinese should be enabled first</li>
+<li>keep_none_chinese_in_first_letter keep non Chinese letters in first letter, eg: 刘德华AT2016-&gt;ldhat2016, default: true</li>
+<li>keep_none_chinese_in_joined_full_pinyin keep non Chinese letters in joined full pinyin, eg: 刘德华2016-&gt;liudehua2016, default: false</li>
+<li>none_chinese_pinyin_tokenize break non chinese letters into separate pinyin term if they are pinyin, default: true, eg: liudehuaalibaba13zhuanghan -&gt; liu,de,hua,a,li,ba,ba,13,zhuang,han, NOTE: keep_none_chinese and keep_none_chinese_together should be enabled first</li>
+<li>keep_original when this option enabled, will keep original input as well, default: false</li>
+<li>lowercase lowercase non Chinese letters, default: true</li>
+<li>trim_whitespace default: true</li>
+<li>remove_duplicated_term when this option enabled, duplicated term will be removed to save index, eg: de的&gt;de, default: false, NOTE: position related query maybe influenced</li>
+<li>ignore_pinyin_offset after 6.0, offset is strictly constrained, overlapped tokens are not allowed, with this parameter, overlapped token will allowed by ignore offset, please note, all position related query or highlight will become incorrect, you should use multi fields and specify different settings for different query purpose. if you need offset, please set it to false. default: true.</li>
+</ul>
+<h4 id="14-3-插入数据并测试"><a href="#14-3-插入数据并测试" class="headerlink" title="14.3.插入数据并测试"></a>14.3.插入数据并测试</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs json">#插入数据<br>PUT /test_pinyin/_bulk<br><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;index&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;_id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">1</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;科技强国&quot;</span><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;index&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;_id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">2</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;这是一架客机&quot;</span><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;index&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;_id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">3</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">&#125;</span><br><br># 中文query<br>GET test_pinyin/_search<br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;query&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;match&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;科技&quot;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br><br># 拼音query<br>GET test_pinyin/_search<br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;query&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;match&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;keji&quot;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+<h3 id="15-数据迁移"><a href="#15-数据迁移" class="headerlink" title="15.数据迁移"></a>15.数据迁移</h3><p><a target="_blank" rel="noopener" href="https://github.com/elasticsearch-dump/elasticsearch-dump">elasticsearch-dump</a>备份文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">不一定要a集群到b集群，到文件到s3都行，具体看文档说明</span><br> docker run --network host --rm -ti -v /data:/tmp elasticdump/elasticsearch-dump \<br>  --input=http://elastic:law2022@192.168.0.22:9200/law_event_info@1665926463 \<br>  --output=https://elastic:law2022@lvfa-v.com:8085/law_event_info@1665926463 \<br>  --type=analyzer<br>  <br><span class="hljs-meta prompt_"> # </span><span class="language-bash">开启index</span><br> POST /law_event_info@1665926463/_open<br> <br> docker run --network host --rm -ti -v /data:/tmp elasticdump/elasticsearch-dump \<br>  --input=http://elastic:law2022@192.168.0.22:9200/law_event_info@1665926463 \<br>  --output=https://elastic:law2022@lvfa-v.com:8085/law_event_info@1665926463 \<br>  --type=mapping<br>  <br> docker run --network host --rm -ti -v /data:/tmp elasticdump/elasticsearch-dump \<br>  --input=http://elastic:law2022@192.168.0.22:9200/law_event_info@1665926463 \<br>  --output=https://elastic:law2022@lvfa-v.com:8085/law_event_info@1665926463 \<br>  --type=data<br></code></pre></td></tr></table></figure>
+<h3 id="spring-boot-data-elasticsearch"><a href="#spring-boot-data-elasticsearch" class="headerlink" title="spring boot data elasticsearch"></a>spring boot data elasticsearch</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * &lt;br&gt;</span><br><span class="hljs-comment"> * 主题信息   对映主题表</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span>: su af</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@version</span>: v1.0</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">@Data</span><br><span class="hljs-meta">@AllArgsConstructor</span><br><span class="hljs-meta">@NoArgsConstructor</span><br><span class="hljs-meta">@Accessors(chain = true)</span><br><span class="hljs-meta">@Document(indexName = &quot;law_forum_theme&quot;)</span><br><span class="hljs-meta">@Setting(shards = 2, refreshInterval = &quot;10s&quot;)</span><br><span class="hljs-comment">//@Setting(settingPath = &quot;/elasticsearch_config.json&quot;)    自定义分词器与拼音过滤器，实现拼音补全</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ThemeEntity</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Serializable</span> &#123;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * id 关联数据库id</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Id</span><br>    <span class="hljs-keyword">private</span> Long id;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * tag #话题#</span><br><span class="hljs-comment">     * 想做词云？field data需要设置</span><br><span class="hljs-comment">     * mainField = <span class="hljs-doctag">@Field</span>(type = FieldType.Text, fielddata = true)</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@MultiField(</span><br><span class="hljs-meta">            mainField = @Field(type = FieldType.Text, fielddata = true),</span><br><span class="hljs-meta">            otherFields = &#123;</span><br><span class="hljs-meta">                    @InnerField(suffix = &quot;keyword&quot;,type = FieldType.Keyword)</span><br><span class="hljs-meta">            &#125;</span><br><span class="hljs-meta">    )</span><br>    <span class="hljs-keyword">private</span> String title;<br><br><br>    <span class="hljs-meta">@CompletionField(analyzer=&quot;ik_max_word&quot;,searchAnalyzer=&quot;ik_smart&quot;, maxInputLength = 20)</span><br>    <span class="hljs-keyword">private</span> Completion titleSuggest;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 描述</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Field(type = FieldType.Text, analyzer = &quot;ik_max_word&quot;, searchAnalyzer = &quot;ik_smart&quot;)</span><br>    <span class="hljs-keyword">private</span> String description;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 审核状态</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Field(type = FieldType.Integer)</span><br>    <span class="hljs-keyword">private</span> Integer status;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 删除状态</span><br><span class="hljs-comment">     * 默认值: 0</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Field(type = FieldType.Integer)</span><br>    <span class="hljs-keyword">private</span> Integer isDelete;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 坐标  点</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@GeoPointField</span><br>    <span class="hljs-keyword">private</span> GeoPoint location;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 经度</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Field(type = FieldType.Double)</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">double</span> longitude;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 纬度</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Field(type = FieldType.Double)</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">double</span> latitude;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 坐标 区域</span><br><span class="hljs-comment">     * &quot;type&quot; : &quot;polygon&quot;,</span><br><span class="hljs-comment">     * &quot;coordinates&quot; : [</span><br><span class="hljs-comment">     * [ [10.0, 0.0], [11.0, 0.0], [11.0, 1.0], [10.0, 1.0], [10.0, 0.0] ]</span><br><span class="hljs-comment">     * ]</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@GeoShapeField</span><br>    <span class="hljs-keyword">private</span> GeoJson landmark;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * //<span class="hljs-doctag">@LastModifiedDate</span></span><br><span class="hljs-comment">     *     //<span class="hljs-doctag">@Field</span>(type = FieldType.Date, format = DateFormat.date_hour_minute_second,pattern = &quot;yyyy-MM-dd HH:mm:ss:SSS&quot;)</span><br><span class="hljs-comment">     * 创建时间</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second_millis)</span><br>    <span class="hljs-meta">@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;, timezone = &quot;GMT+8&quot;)</span><br>    <span class="hljs-keyword">private</span> LocalDateTime createTime;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Repository</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">ThemeEntityRepository</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ElasticsearchRepository</span>&lt;ThemeEntity, Long&gt; &#123;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 根据描述或者title查询贴吧</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> describe 描述</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> title    title</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> list</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Highlight(fields = &#123;</span><br><span class="hljs-meta">            @HighlightField(name = &quot;content&quot;),</span><br><span class="hljs-meta">            @HighlightField(name = &quot;description&quot;),</span><br><span class="hljs-meta">            @HighlightField(name = &quot;title&quot;),</span><br><span class="hljs-meta">    &#125;, parameters = @HighlightParameters(</span><br><span class="hljs-meta">            preTags = &quot;&lt;span style=&#x27;color:red&#x27;&gt;&quot;,</span><br><span class="hljs-meta">            postTags = &quot;&lt;/strong&gt;&quot;</span><br><span class="hljs-meta">    ))</span><br>    List&lt;SearchHit&lt;ThemeEntity&gt;&gt; <span class="hljs-title function_">findThemeEntityByDescriptionOrTitle</span><span class="hljs-params">(String describe, String title)</span>;<br><br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 令人费解，如果获取page 则不能获取高亮数据</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> describe</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> title</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> pageable</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span></span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Highlight(fields = &#123;</span><br><span class="hljs-meta">            @HighlightField(name = &quot;content&quot;),</span><br><span class="hljs-meta">            @HighlightField(name = &quot;description&quot;),</span><br><span class="hljs-meta">            @HighlightField(name = &quot;title&quot;),</span><br><span class="hljs-meta">    &#125;, parameters = @HighlightParameters(</span><br><span class="hljs-meta">            preTags = &quot;&lt;span style=&#x27;color:red&#x27;&gt;&quot;,</span><br><span class="hljs-meta">            postTags = &quot;&lt;/strong&gt;&quot;</span><br><span class="hljs-meta">    ))</span><br>    Page&lt;ThemeEntity&gt; <span class="hljs-title function_">findThemeEntityByDescriptionOrTitle</span><span class="hljs-params">(String describe, String title, Pageable pageable)</span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * sort query</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> describe       desc</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> title          title</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> sort           sort</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span>               list</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Highlight(fields = &#123;</span><br><span class="hljs-meta">            @HighlightField(name = &quot;content&quot;),</span><br><span class="hljs-meta">            @HighlightField(name = &quot;description&quot;),</span><br><span class="hljs-meta">            @HighlightField(name = &quot;title&quot;),</span><br><span class="hljs-meta">    &#125;, parameters = @HighlightParameters(</span><br><span class="hljs-meta">            preTags = &quot;&lt;span style=&#x27;color:red&#x27;&gt;&quot;,</span><br><span class="hljs-meta">            postTags = &quot;&lt;/strong&gt;&quot;</span><br><span class="hljs-meta">    ))</span><br>    List&lt;ThemeEntity&gt; <span class="hljs-title function_">findThemeEntityByDescriptionOrTitle</span><span class="hljs-params">(String describe, String title, Sort sort)</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-meta">@SneakyThrows</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCompletion</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-type">ThemeInfoEntity</span> <span class="hljs-variable">themeInfoEntity</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ThemeInfoEntity</span>();<br>    themeInfoEntity.setId(<span class="hljs-number">1L</span>);<br>    themeInfoEntity.setTitle(<span class="hljs-string">&quot;这是一个有意思的标题&quot;</span>);<br>    <span class="hljs-type">Completion</span> <span class="hljs-variable">completion</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Completion</span>(Lists.newArrayList(<span class="hljs-string">&quot;这是一个有意思的标题&quot;</span>));<br>    themeInfoEntity.setTitleSuggest(completion);<br>    themeInfoEntityRepository.save(themeInfoEntity);<br><br>    <span class="hljs-type">SuggestBuilder</span> <span class="hljs-variable">suggestBuilder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SuggestBuilder</span>().addSuggestion(<span class="hljs-string">&quot;simple_suggest&quot;</span>,<br>            SuggestBuilders.completionSuggestion(<span class="hljs-string">&quot;titleSuggest&quot;</span>)<br>                    .prefix(<span class="hljs-string">&quot;这是&quot;</span>)<br>                    .analyzer(<span class="hljs-string">&quot;ik_max_word&quot;</span>)<br>                    .size(<span class="hljs-number">3</span>)<br>    );<br>    <span class="hljs-type">SearchResponse</span> <span class="hljs-variable">suggestResp</span> <span class="hljs-operator">=</span> elasticsearchOperations.suggest(suggestBuilder, ThemeInfoEntity.class);<br>    Suggest.Suggestion&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Suggest</span>.Suggestion.Entry&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Suggest</span>.Suggestion.Entry.Option&gt;&gt; completionSuggest = suggestResp.getSuggest().getSuggestion(<span class="hljs-string">&quot;simple_suggest&quot;</span>);<br>    List&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Suggest</span>.Suggestion.Entry&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Suggest</span>.Suggestion.Entry.Option&gt;&gt; entries = completionSuggest.getEntries();<br>    List&lt;Object&gt; collect = entries.stream().map(entry -&gt; &#123;<br>        <span class="hljs-keyword">if</span> (!entry.getOptions().isEmpty()) &#123;<br>            <span class="hljs-type">Text</span> <span class="hljs-variable">text</span> <span class="hljs-operator">=</span> entry.getOptions().get(<span class="hljs-number">0</span>).getText();<br>            <span class="hljs-keyword">return</span> text.string();<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>;<br>    &#125;).collect(Collectors.toList());<br>    collect.forEach(System.out::println);<br>&#125;<br><br><span class="hljs-meta">@Test</span><br><span class="hljs-meta">@SneakyThrows</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSuggestTerm</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * &#123;</span><br><span class="hljs-comment">     *   &quot;errorCorrection&quot; : &#123;</span><br><span class="hljs-comment">     *     &quot;text&quot; : &quot;The suggest feature suggestts&quot;,</span><br><span class="hljs-comment">     *     &quot;term&quot; : &#123;</span><br><span class="hljs-comment">     *       &quot;analyzer&quot; : &quot;ik_max_word&quot;,</span><br><span class="hljs-comment">     *       &quot;field&quot; : &quot;description&quot;,</span><br><span class="hljs-comment">     *       &quot;size&quot; : 3,</span><br><span class="hljs-comment">     *       &quot;suggest_mode&quot; : &quot;MISSING&quot;,</span><br><span class="hljs-comment">     *       &quot;accuracy&quot; : 0.5,</span><br><span class="hljs-comment">     *       &quot;sort&quot; : &quot;SCORE&quot;,</span><br><span class="hljs-comment">     *       &quot;string_distance&quot; : &quot;INTERNAL&quot;,</span><br><span class="hljs-comment">     *       &quot;max_edits&quot; : 2,</span><br><span class="hljs-comment">     *       &quot;max_inspections&quot; : 5,</span><br><span class="hljs-comment">     *       &quot;max_term_freq&quot; : 0.01,</span><br><span class="hljs-comment">     *       &quot;prefix_length&quot; : 1,</span><br><span class="hljs-comment">     *       &quot;min_word_length&quot; : 4,</span><br><span class="hljs-comment">     *       &quot;min_doc_freq&quot; : 0.0</span><br><span class="hljs-comment">     *     &#125;</span><br><span class="hljs-comment">     *   &#125;</span><br><span class="hljs-comment">     * &#125;</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-type">SuggestBuilder</span> <span class="hljs-variable">suggestBuilder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SuggestBuilder</span>().addSuggestion(<span class="hljs-string">&quot;errorCorrection&quot;</span>,<br>            SuggestBuilders.termSuggestion(<span class="hljs-string">&quot;description&quot;</span>)<br>                    .text(<span class="hljs-string">&quot;The suggest feature suggestts&quot;</span>)<br>                    .suggestMode(TermSuggestionBuilder.SuggestMode.MISSING)<br>                    .analyzer(<span class="hljs-string">&quot;ik_max_word&quot;</span>)<br>                    .size(<span class="hljs-number">3</span>).sort(SortBy.SCORE)<br>    );<br>    <span class="hljs-type">SearchResponse</span> <span class="hljs-variable">suggestResp</span> <span class="hljs-operator">=</span> elasticsearchOperations.suggest(suggestBuilder, ThemeEntity.class);<br>    Suggest.Suggestion&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Suggest</span>.Suggestion.Entry&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Suggest</span>.Suggestion.Entry.Option&gt;&gt; errorCorrection = suggestResp.getSuggest().getSuggestion(<span class="hljs-string">&quot;errorCorrection&quot;</span>);<br>    List&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Suggest</span>.Suggestion.Entry&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Suggest</span>.Suggestion.Entry.Option&gt;&gt; entries = errorCorrection.getEntries();<br>    List&lt;Object&gt; collect = entries.stream().map(entry -&gt; &#123;<br>        <span class="hljs-keyword">if</span> (!entry.getOptions().isEmpty()) &#123;<br>            <span class="hljs-type">Text</span> <span class="hljs-variable">text</span> <span class="hljs-operator">=</span> entry.getOptions().get(<span class="hljs-number">0</span>).getText();<br>            <span class="hljs-keyword">return</span> text.string();<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>;<br>    &#125;).collect(Collectors.toList());<br>    collect.forEach(System.out::println);<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br> <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">query</span><span class="hljs-params">()</span> &#123;<br>     <span class="hljs-comment">//分页</span><br>     <span class="hljs-type">Pageable</span> <span class="hljs-variable">pageInfo</span> <span class="hljs-operator">=</span> PageRequest.of(<span class="hljs-number">1</span> - <span class="hljs-number">1</span>, <span class="hljs-number">10</span>);<br>     <span class="hljs-comment">//查询条件构建</span><br>     <span class="hljs-type">GeoPoint</span> <span class="hljs-variable">geoPoint</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">GeoPoint</span>(<span class="hljs-number">39.927</span>, <span class="hljs-number">116.322</span>);<br>     <span class="hljs-type">NativeSearchQuery</span> <span class="hljs-variable">searchQuery</span> <span class="hljs-operator">=</span> getSearchQuery(geoPoint, pageInfo);<br>     <span class="hljs-comment">//查询并返回结果</span><br>     SearchHits&lt;ThemeEntity&gt; themeEntitySearchHits = elasticsearchOperations.search(searchQuery, ThemeEntity.class);<br><br>     List&lt;Integer&gt; nearbyStoreList = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>     themeEntitySearchHits.forEach(hitTheme -&gt; &#123;<br>                 <span class="hljs-type">ThemeEntity</span> <span class="hljs-variable">theme</span> <span class="hljs-operator">=</span> hitTheme.getContent();<br>                 <span class="hljs-type">int</span> <span class="hljs-variable">distance</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>                 <span class="hljs-comment">//坐标不为空时计算出距离（单位：km）</span><br>                 <span class="hljs-keyword">if</span> (!StringUtils.isEmpty(geoPoint.getLat() + <span class="hljs-string">&quot;&quot;</span>) &amp;&amp; !StringUtils.isEmpty(geoPoint.getLon() + <span class="hljs-string">&quot;&quot;</span>)) &#123;<br>                     <span class="hljs-comment">//LocationUtils.getDistance,通过经纬度获得实际距离的方法，可百度</span><br>                     distance = (<span class="hljs-type">int</span>) LocationUtils.getDistance(geoPoint, theme.getLocation());<br>                 &#125;<br>                 nearbyStoreList.add(distance);<br>             &#125;<br>     );<br>     nearbyStoreList.forEach(System.out::println);<br> &#125;<br><br> <span class="hljs-meta">@Test</span><br> <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">queryShape</span><span class="hljs-params">()</span> &#123;<br>     <span class="hljs-comment">//分页</span><br>     <span class="hljs-type">Pageable</span> <span class="hljs-variable">pageInfo</span> <span class="hljs-operator">=</span> PageRequest.of(<span class="hljs-number">1</span> - <span class="hljs-number">1</span>, <span class="hljs-number">10</span>);<br>     <span class="hljs-comment">//查询条件构建</span><br>     <span class="hljs-type">GeoPoint</span> <span class="hljs-variable">geoPoint1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">GeoPoint</span>(<span class="hljs-number">39.927</span>, <span class="hljs-number">116.322</span>);<br>     <span class="hljs-type">GeoPoint</span> <span class="hljs-variable">geoPoint2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">GeoPoint</span>(<span class="hljs-number">39.227</span>, <span class="hljs-number">116.722</span>);<br>     <span class="hljs-type">NativeSearchQuery</span> <span class="hljs-variable">searchQuery</span> <span class="hljs-operator">=</span> getSearchQuery(geoPoint1, geoPoint2, pageInfo);<br>     <span class="hljs-comment">//查询并返回结果</span><br>     SearchHits&lt;ThemeEntity&gt; themeEntitySearchHits = elasticsearchOperations.search(searchQuery, ThemeEntity.class);<br><br>     themeEntitySearchHits.forEach(hitTheme -&gt; &#123;<br>                 <span class="hljs-type">ThemeEntity</span> <span class="hljs-variable">theme</span> <span class="hljs-operator">=</span> hitTheme.getContent();<br>                 System.out.println(theme);<br>             &#125;<br>     );<br> &#125;<br><br> <span class="hljs-comment">/**</span><br><span class="hljs-comment">  * <span class="hljs-doctag">@description</span>: 入参条件查询构建</span><br><span class="hljs-comment">  **/</span><br> <span class="hljs-keyword">private</span> NativeSearchQuery <span class="hljs-title function_">getSearchQuery</span><span class="hljs-params">(GeoPoint locationModel, Pageable pageInfo)</span> &#123;<br>     <span class="hljs-type">BoolQueryBuilder</span> <span class="hljs-variable">boolQuery</span> <span class="hljs-operator">=</span> QueryBuilders.boolQuery();<br>     <span class="hljs-comment">//boolQuery.must(boolQuery.must(QueryBuilders.termQuery(&quot;is_delete&quot;, false)));</span><br>     <span class="hljs-comment">//不为空查询经度与纬度</span><br>     boolQuery.must(QueryBuilders.existsQuery(<span class="hljs-string">&quot;latitude&quot;</span>));<br>     boolQuery.must(QueryBuilders.existsQuery(<span class="hljs-string">&quot;longitude&quot;</span>));<br>     <span class="hljs-comment">//构建查询</span><br>     <span class="hljs-type">NativeSearchQueryBuilder</span> <span class="hljs-variable">nativeBuilder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NativeSearchQueryBuilder</span>();<br>     <span class="hljs-comment">//调用地理位置查询构建方法</span><br>     <span class="hljs-keyword">if</span> (!StringUtils.isEmpty(locationModel.getLat() + <span class="hljs-string">&quot;&quot;</span>) &amp;&amp; !StringUtils.isEmpty(locationModel.getLon() + <span class="hljs-string">&quot;&quot;</span>)) &#123;<br>         getLocation(locationModel, boolQuery, nativeBuilder);<br>     &#125;<br>     <span class="hljs-keyword">if</span> (StringUtils.isEmpty(locationModel.getLat() + <span class="hljs-string">&quot;&quot;</span>) || StringUtils.isEmpty(locationModel.getLon() + <span class="hljs-string">&quot;&quot;</span>)) &#123;<br>         nativeBuilder.withSort(SortBuilders.fieldSort(<span class="hljs-string">&quot;latitude&quot;</span>).order(SortOrder.DESC));<br>     &#125;<br>     <span class="hljs-comment">//构建完成</span><br>     <span class="hljs-keyword">return</span> nativeBuilder<br>             .withQuery(boolQuery)<br>             .withPageable(pageInfo)<br>             .build();<br> &#125;<br><br> <span class="hljs-keyword">private</span> NativeSearchQuery <span class="hljs-title function_">getSearchQuery</span><span class="hljs-params">(GeoPoint locationModel1, GeoPoint locationModel2, Pageable pageInfo)</span> &#123;<br>     <span class="hljs-type">BoolQueryBuilder</span> <span class="hljs-variable">boolQuery</span> <span class="hljs-operator">=</span> QueryBuilders.boolQuery();<br>     <span class="hljs-comment">//storeBool.must(storeBool.must(QueryBuilders.termQuery(&quot;is_delete&quot;, false)));</span><br>     <span class="hljs-comment">//不为空查询经度与纬度</span><br>     boolQuery.must(QueryBuilders.existsQuery(<span class="hljs-string">&quot;latitude&quot;</span>));<br>     boolQuery.must(QueryBuilders.existsQuery(<span class="hljs-string">&quot;longitude&quot;</span>));<br>     <span class="hljs-comment">//构建查询</span><br>     <span class="hljs-type">NativeSearchQueryBuilder</span> <span class="hljs-variable">nativeBuilder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NativeSearchQueryBuilder</span>();<br>     <span class="hljs-comment">//调用地理位置查询构建方法</span><br>     <span class="hljs-keyword">if</span> (!StringUtils.isEmpty(locationModel1.getLat() + <span class="hljs-string">&quot;&quot;</span>) &amp;&amp; !StringUtils.isEmpty(locationModel2.getLon() + <span class="hljs-string">&quot;&quot;</span>)) &#123;<br>         getShape(locationModel1, locationModel2, boolQuery, nativeBuilder);<br>     &#125;<br>     <span class="hljs-keyword">if</span> (StringUtils.isEmpty(locationModel1.getLat() + <span class="hljs-string">&quot;&quot;</span>) || StringUtils.isEmpty(locationModel1.getLon() + <span class="hljs-string">&quot;&quot;</span>)) &#123;<br>         nativeBuilder.withSort(SortBuilders.fieldSort(<span class="hljs-string">&quot;latitude&quot;</span>).order(SortOrder.DESC));<br>     &#125;<br>     <span class="hljs-comment">//构建完成</span><br>     <span class="hljs-keyword">return</span> nativeBuilder<br>             .withQuery(boolQuery)<br>             .withPageable(pageInfo)<br>             .build();<br> &#125;<br><br> <span class="hljs-comment">/**</span><br><span class="hljs-comment">  * <span class="hljs-doctag">@description</span>: 地理位置查询条件构建</span><br><span class="hljs-comment">  **/</span><br> <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">getLocation</span><span class="hljs-params">(GeoPoint geoPoint, BoolQueryBuilder queryBool, NativeSearchQueryBuilder searchQueryBuilder)</span> &#123;<br>     <span class="hljs-comment">// 以某点为中心，搜索指定范围</span><br>     <span class="hljs-type">GeoDistanceQueryBuilder</span> <span class="hljs-variable">distanceQueryBuilder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">GeoDistanceQueryBuilder</span>(<span class="hljs-string">&quot;location&quot;</span>);<br>     <span class="hljs-comment">//指定从哪个位置搜索</span><br>     distanceQueryBuilder.point(geoPoint.getLat(), geoPoint.getLon());<br>     <span class="hljs-comment">//指定搜索多少km，distance可为自定义数值</span><br>     distanceQueryBuilder.distance(<span class="hljs-number">10</span>, DistanceUnit.KILOMETERS);<br>     queryBool.filter(distanceQueryBuilder);<br>     <span class="hljs-comment">// 按距离升序排列</span><br>     <span class="hljs-type">GeoDistanceSortBuilder</span> <span class="hljs-variable">distanceSortBuilder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">GeoDistanceSortBuilder</span>(<span class="hljs-string">&quot;location&quot;</span>, geoPoint.getLat(), geoPoint.getLon());<br>     distanceSortBuilder.unit(DistanceUnit.KILOMETERS);<br>     distanceSortBuilder.order(SortOrder.ASC);<br>     searchQueryBuilder.withSort(distanceSortBuilder);<br> &#125;<br></code></pre></td></tr></table></figure>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%B7%A5%E5%85%B7/" class="category-chain-item">工具</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="print-no-link">#中间件</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ElasticSearch-Tips</div>
+      <div>https://vegetablest.github.io/2021/04/24/ElasticSearch-Tips/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>af su</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年4月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/08/03/Maven%E7%9F%A5%E8%AF%86%E8%AE%B0%E5%BD%95/" title="Maven知识记录">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Maven知识记录</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/03/21/git%E4%BD%BF%E7%94%A8/" title="Git使用">
+                        <span class="hidden-mobile">Git使用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,718 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="af su">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1.基本原则 不影响系统正常运行 不允许出现安全问题 日志可供开发人员定位问题的真正原因 日志可供监控系统自动监控与分析  2.日志级别 ERROR：影响系统正常运行，影响业务正常运行，明确需要人工干预。比如：数据库不可用，关键业务流程中断等等 WARN：发生这个级别问题时，处理过程可以继续，但必须对这个问题给予额外关注。这个问题又可以细分成两种情况：一种是存在严重的问题但有应急措施（比如数据库不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="日志规范">
+<meta property="og:url" content="https://vegetablest.github.io/2021/02/19/%E6%97%A5%E5%BF%97%E8%A7%84%E8%8C%83/index.html">
+<meta property="og:site_name" content="vegetablest">
+<meta property="og:description" content="1.基本原则 不影响系统正常运行 不允许出现安全问题 日志可供开发人员定位问题的真正原因 日志可供监控系统自动监控与分析  2.日志级别 ERROR：影响系统正常运行，影响业务正常运行，明确需要人工干预。比如：数据库不可用，关键业务流程中断等等 WARN：发生这个级别问题时，处理过程可以继续，但必须对这个问题给予额外关注。这个问题又可以细分成两种情况：一种是存在严重的问题但有应急措施（比如数据库不">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-19T21:38:00.000Z">
+<meta property="article:modified_time" content="2026-02-28T07:55:16.988Z">
+<meta property="article:author" content="af su">
+<meta property="article:tag" content="规范">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>日志规范 - vegetablest</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"vegetablest.github.io","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Vegetablest</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="日志规范"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-02-19 21:38" pubdate>
+          2021年2月19日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          20k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          51 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">日志规范</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="1-基本原则"><a href="#1-基本原则" class="headerlink" title="1.基本原则"></a>1.基本原则</h3><ul>
+<li>不影响系统正常运行</li>
+<li>不允许出现安全问题</li>
+<li>日志可供开发人员定位问题的真正原因</li>
+<li>日志可供监控系统自动监控与分析</li>
+</ul>
+<h3 id="2-日志级别"><a href="#2-日志级别" class="headerlink" title="2.日志级别"></a>2.日志级别</h3><ul>
+<li>ERROR：影响系统正常运行，影响业务正常运行，明确需要人工干预。比如：数据库不可用，关键业务流程中断等等</li>
+<li>WARN：发生这个级别问题时，处理过程可以继续，但必须对这个问题给予额外关注。这个问题又可以细分成两种情况：一种是存在严重的问题但有应急措施（比如数据库不可用，使用Cache）；第二种是潜在问题及建议（ATTENTION），比如生产环境的应用运行在Development模式下、管理控制台没有密码保护等。系统可以允许这种错误的存在，但必须及时做跟踪检查</li>
+<li>INFO：重要的业务处理已经结束。在实际环境中，系统管理员或者高级用户要能理解INFO输出的信息并能很快的了解应用正在做什么。比如，一个和处理机票预订的系统，对每一张票要有且只有一条INFO信息描述 “[Who] booked ticket from [Where] to [Where]”。另外一种对INFO信息的定义是：记录显著改变应用状态的每一个action，比如：数据库更新、外部系统请求</li>
+<li>DEBUG：用于开发人员使用。将在TRACE章节中一起说明这个级别该输出什么信息。</li>
+<li>TRACE：非常具体的信息，只能用于开发调试使用。部署到生产环境后，这个级别的信息只能保持很短的时间。这些信息只能临时存在，并将最终被关闭。要区分DEBUG和TRACE会比较困难，对一个在开发及测试完成后将被删除的LOG输出，可能会比较适合定义为TRACE级别。</li>
+</ul>
+<h3 id="3-日志对性能的影响"><a href="#3-日志对性能的影响" class="headerlink" title="3.日志对性能的影响"></a>3.日志对性能的影响</h3><ul>
+<li>如何创建Logger实例：对于可以预见的多数情况下单例运行的class，可以不添加static前缀；对于可能是多例居多，尤其是需要频繁创建的class，我们要求要添加static前缀</li>
+<li>判断日志级别：对于可以预见的会频繁产生的日志输出，比如for、while循环，定期执行的job等，建议先使用if对日志级别进行判断后再输出。对于日志输出内容需要复杂的序列化，或输出的某些信息获取成本较高时，需要对日志级别进行判断。比如日志中需要输出用户名，而用户名需要在日志输出时从数据库获取，此时就需要先判断一下日志级别，看看是否有必要获取这些信息。</li>
+<li>优先使用参数，减少字符串拼接：使用参数的方式输出日志信息，有助于在性能和代码简洁之间取得平衡。当日志级别限制输出该日志时，参数内容将不会融合到最终输出中，减少了字符串的拼接，从而提升执行效率。</li>
+</ul>
+<h3 id="4-什么时候应该打印日志"><a href="#4-什么时候应该打印日志" class="headerlink" title="4.什么时候应该打印日志"></a>4.什么时候应该打印日志</h3><ul>
+<li>系统初始化：系统初始化时会依赖一些关键配置，根据参数不同会提供不一样的服务。将系统的启动参数记录INFO日志，打印出参数以及启动完成态服务表述。</li>
+<li>业务流程与预期不符：项目代码中结果与期望不符时也是日志场景之一，简单来说所有流程分支都可以加入考虑。取决于开发人员判断能否容忍情形发生。常见的合适场景包括外部参数不正确，数据处理问题导致返回码不在合理范围内等等</li>
+<li>系统核心的关键动作：系统中核心角色触发的业务动作是需要多加关注的，是衡量系统正常运行的重要指标，建议记录INFO级别日志，比如电商系统用户从登录到下单的整个流程；微服务各服务节点交互；核心数据表增删改等等。</li>
+<li>系统异常：这类捕获的异常是系统告知开发人员需要加以关注的，是质量非常高的报错。应当适当记录日志，根据实际结合业务的情况使用warn或者error级别。</li>
+</ul>
+<h3 id="5-建议"><a href="#5-建议" class="headerlink" title="5.建议"></a>5.建议</h3><ul>
+<li>使用参数化信息的方式:<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">logger.debug(<span class="hljs-string">&quot;Processing trade with id:[&#123;&#125;] and symbol : [&#123;&#125;] &quot;</span>, id, symbol);<br></code></pre></td></tr></table></figure></li>
+<li>使用[]进行参数变量隔离,如有参数变量，应该写成如下写法:<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//可读性更好，对于排查问题更有帮助。</span><br>logger.debug(<span class="hljs-string">&quot;Processing trade with id:[&#123;&#125;] and symbol : [&#123;&#125;] &quot;</span>, id, symbol);<br></code></pre></td></tr></table></figure></li>
+<li>禁用System.out.println  不要直接使用System.out或System.err 输出日志，也不允许使用 STDOUT、STDERR 作为Logger名字<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//错误</span><br>System.out.print( <span class="hljs-string">&quot;do something. . .&quot;</span>);<br>System.err.print(<span class="hljs-string">&quot;do something. . .&quot;</span>);<br><span class="hljs-comment">//错误</span><br>STDOUT.info( <span class="hljs-string">&quot;do something. . .&quot;</span>);<br>STDERR.info( <span class="hljs-string">&quot;do something. . . &quot;</span>);<br><span class="hljs-comment">//正确</span><br>logger.info( <span class="hljs-string">&quot;do something. . . &quot;</span>);<br>logger.error( <span class="hljs-string">&quot;do something.. .&quot;</span>);<br></code></pre></td></tr></table></figure></li>
+<li>对于else 是非正常的情况，需要根据情况选择打印warn 或 error 日志。对于只有 if 没有 else 的地方，如果 else 的路径是不可能的，应当加上 else 语句，并打印 error 日志。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">if</span>(<span class="hljs-literal">true</span>)&#123;<br>   <span class="hljs-comment">//do something </span><br>&#125;<span class="hljs-keyword">else</span> &#123;<br>	logger.error(<span class="hljs-string">&quot;It is impossible. . .&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>不打无意义的日志，不记录对于排查故障毫无意义的日志信息，日志信息一定要带有业务信息<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//错误</span><br>logger.error( <span class="hljs-string">&quot;Consume message failed !! ! &quot;</span>);<br><span class="hljs-comment">//正确</span><br>logger.error(<span class="hljs-string">&quot;Consume message failed, msgId=, &quot;</span>, id);<br></code></pre></td></tr></table></figure></li>
+<li>不推荐字符串拼接，如果信息本身需要计算或合并的，打印前要对isxxxEnable()方法进行判断。这是因为在WARN级别时，即使INFO信息不打印，也会执行字符串拼接，造成资源浪费。实际上，不推荐使用字符串拼接的方式打印日志，可读性和可维护性都比较差。建议使用占位符</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//错误</span><br><span class="hljs-keyword">if</span> (logger.isInfoEnabled())&#123;<br>	logger.info( <span class="hljs-string">&quot;Push message success,id=&quot;</span> + id + <span class="hljs-string">&quot;,msg=&quot;</span> +msg);<br>&#125;<br><span class="hljs-comment">//错误</span><br>logger.warn(<span class="hljs-string">&quot;Push message failed，id=&quot;</span> + id + <span class="hljs-string">&quot;,msg=&quot;</span> + msg + <span class="hljs-string">&quot; ,reason=&quot;</span>+ response.getReason());<br><span class="hljs-comment">//正确</span><br>logger.warn(<span class="hljs-string">&quot;Push message failed,id=&#123;&#125;,msg=&#123;&#125;，reason=&#123;&#125;&quot;</span>，id，msg，response.getReason()); <br></code></pre></td></tr></table></figure>
+<ul>
+<li>循环体内不要打印info日志<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">for</span> (Message message : messages) &#123;<br>	<span class="hljs-keyword">if</span> ( response.isSuccess())&#123;<br>		<span class="hljs-comment">//错误</span><br>		logger.info(<span class="hljs-string">&quot;Message sends successfully,msgId=&#123;&#125;&quot;</span>, message.getId());<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>打印日志的代码任何情况下都不允许失败,一定要确保不会因为Log语句的问题而抛出异常造成中断。如下，如果request为null，就会抛空指针异常<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">logger.error( <span class="hljs-string">&quot;execute failed,id:&#123;&#125;&quot;</span>,request.getId());<br></code></pre></td></tr></table></figure></li>
+<li>重要方法入口建议记录方法调用、入参、返回值，对于排查问题会有很大帮助。注解应该可实现,后续调研<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> Response <span class="hljs-title function_">consume</span><span class="hljs-params">(Message msg)</span> &#123;<br>	logger.debug(<span class="hljs-string">&quot;Prepare to consume a message，msgId=&#123;&#125;, content=&#123;&#125;&quot;</span> , msg.getId(), msg.getContent());<br>	<span class="hljs-type">Response</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> messageService.send(msg);<br>	logger.debug(<span class="hljs-string">&quot;Consume result:&#123;&#125;,status code:&#123;&#125;&quot;</span>, response.isSuccess(), response.getCode());<br>	<span class="hljs-keyword">return</span> response;<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>异常情况，catch中的异常记录必须打印堆栈信息，不要用e.printStackTrace()<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">try</span> &#123;<br>	<span class="hljs-comment">//do something</span><br>&#125;<span class="hljs-keyword">catch</span> (Exception e)&#123;<br>	<span class="hljs-comment">//正确</span><br>	logger.error( <span class="hljs-string">&quot;something wrong&quot;</span>, e);<br>	<span class="hljs-comment">//错误</span><br>	e.printStackTrace();<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>不要记录日志后又抛出异常。抛出去的异常，一般外层会处理。如果不处理，那为什么还要抛出去？另外一个原则是，无论是否发生异常，都不要在不同地方重复记录针对同一事件的日志消息</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-comment">//do something</span><br>&#125;<span class="hljs-keyword">catch</span> (Exception e)&#123;<br>    logger.error( <span class="hljs-string">&quot;something wrong&quot;</span>, e);<br>    <span class="hljs-keyword">throw</span> e;<br>&#125;<br></code></pre></td></tr></table></figure>
+<ul>
+<li>输出Exceptions的全部Throwable信息。否则会丢失最重要的堆栈信息。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">try</span> &#123;<br>	<span class="hljs-comment">//do something</span><br>&#125; <span class="hljs-keyword">catch</span> (Exception e)&#123;<br>	<span class="hljs-comment">//错误</span><br>	logger.error( <span class="hljs-string">&quot;Invoke causes a exception:&#123;&#125;&quot;</span>, e.getMessage());<br>    <span class="hljs-comment">//正确</span><br>	logger.error( <span class="hljs-string">&quot;Invoke causes a exception:&#123;&#125;&quot;</span>, e);<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>组件间交互接口上,建议增加日志输出，以方便异常情况下的排查</li>
+</ul>
+<h3 id="5-统一logback配置"><a href="#5-统一logback配置" class="headerlink" title="5.统一logback配置"></a>5.统一logback配置</h3><ul>
+<li>logback.xml—-&gt;engine<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">configuration</span> <span class="hljs-attr">scan</span>=<span class="hljs-string">&quot;true&quot;</span> <span class="hljs-attr">scanPeriod</span>=<span class="hljs-string">&quot;10 seconds&quot;</span> <span class="hljs-attr">debug</span>=<span class="hljs-string">&quot;false&quot;</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- 日志最大的历史 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;MAX_HISTORY&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;30&quot;</span>/&gt;</span><br>        <span class="hljs-comment">&lt;!-- 组件名称 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;MODULE_NAME&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;engine&quot;</span>/&gt;</span><br>        <span class="hljs-comment">&lt;!-- 日志文件目录 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;DIR&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;logs&quot;</span>/&gt;</span><br>        <span class="hljs-comment">&lt;!-- 日志文件大小上限 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;MAX_FILE_SIZE&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;100MB&quot;</span>/&gt;</span><br><br>        <span class="hljs-comment">&lt;!-- 开启JMX管理日志 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">jmxConfigurator</span> /&gt;</span><br>        <span class="hljs-comment">&lt;!-- 输出到控制台 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;STDOUT&quot;</span></span><br><span class="hljs-tag">                          <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.ConsoleAppender&quot;</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">encoder</span>&gt;</span><br>                        <span class="hljs-comment">&lt;!-- 输出格式 --&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">pattern</span>&gt;</span><br>                                %d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;36&#125; %X&#123;traceId&#125; - %msg%n<br>                        <span class="hljs-tag">&lt;/<span class="hljs-name">pattern</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">encoder</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-comment">&lt;!-- error级别单独记录 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;errorAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">file</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;-error.log<span class="hljs-tag">&lt;/<span class="hljs-name">file</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 以day为单位自动回滚 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">rollingPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">fileNamePattern</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;-error/$&#123;MODULE_NAME&#125;-error-%d&#123;yyyy-MM-dd&#125;.%i.log.gz<span class="hljs-tag">&lt;/<span class="hljs-name">fileNamePattern</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">maxHistory</span>&gt;</span>$&#123;MAX_HISTORY&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxHistory</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP&quot;</span>&gt;</span><br>                                <span class="hljs-comment">&lt;!-- or whenever the file size reaches 100MB --&gt;</span><br>                                <span class="hljs-tag">&lt;<span class="hljs-name">maxFileSize</span>&gt;</span>$&#123;MAX_FILE_SIZE&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxFileSize</span>&gt;</span><br>                        <span class="hljs-tag">&lt;/<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">rollingPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">encoder</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">pattern</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;35&#125; %X&#123;traceId&#125; - %msg%n<span class="hljs-tag">&lt;/<span class="hljs-name">pattern</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">encoder</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- error级别过滤器 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">filter</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.filter.LevelFilter&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">level</span>&gt;</span>ERROR<span class="hljs-tag">&lt;/<span class="hljs-name">level</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">onMatch</span>&gt;</span>ACCEPT<span class="hljs-tag">&lt;/<span class="hljs-name">onMatch</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">onMismatch</span>&gt;</span>DENY<span class="hljs-tag">&lt;/<span class="hljs-name">onMismatch</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">filter</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-comment">&lt;!-- warn级别单独记录 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;warnAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">file</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;-warn.log<span class="hljs-tag">&lt;/<span class="hljs-name">file</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 以day为单位自动回滚 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">rollingPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">fileNamePattern</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;-warn/$&#123;MODULE_NAME&#125;-warn-%d&#123;yyyy-MM-dd&#125;.%i.log.gz<span class="hljs-tag">&lt;/<span class="hljs-name">fileNamePattern</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">maxHistory</span>&gt;</span>$&#123;MAX_HISTORY&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxHistory</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP&quot;</span>&gt;</span><br>                                <span class="hljs-comment">&lt;!-- or whenever the file size reaches 100MB --&gt;</span><br>                                <span class="hljs-tag">&lt;<span class="hljs-name">maxFileSize</span>&gt;</span>$&#123;MAX_FILE_SIZE&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxFileSize</span>&gt;</span><br>                        <span class="hljs-tag">&lt;/<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">rollingPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">encoder</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">pattern</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;35&#125; %X&#123;traceId&#125; - %msg%n<span class="hljs-tag">&lt;/<span class="hljs-name">pattern</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">encoder</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- error级别过滤器 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">filter</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.filter.LevelFilter&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">level</span>&gt;</span>WARN<span class="hljs-tag">&lt;/<span class="hljs-name">level</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">onMatch</span>&gt;</span>ACCEPT<span class="hljs-tag">&lt;/<span class="hljs-name">onMatch</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">onMismatch</span>&gt;</span>DENY<span class="hljs-tag">&lt;/<span class="hljs-name">onMismatch</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">filter</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-comment">&lt;!-- debug级别单独记录 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;debugAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">file</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;-debug.log<span class="hljs-tag">&lt;/<span class="hljs-name">file</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 以day为单位自动回滚 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">rollingPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">fileNamePattern</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;-debug/$&#123;MODULE_NAME&#125;-debug-%d&#123;yyyy-MM-dd&#125;.%i.log.gz<span class="hljs-tag">&lt;/<span class="hljs-name">fileNamePattern</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">maxHistory</span>&gt;</span>$&#123;MAX_HISTORY&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxHistory</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP&quot;</span>&gt;</span><br>                                <span class="hljs-comment">&lt;!-- or whenever the file size reaches 100MB --&gt;</span><br>                                <span class="hljs-tag">&lt;<span class="hljs-name">maxFileSize</span>&gt;</span>$&#123;MAX_FILE_SIZE&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxFileSize</span>&gt;</span><br>                        <span class="hljs-tag">&lt;/<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">rollingPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">encoder</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">pattern</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;35&#125; %X&#123;traceId&#125; - %msg%n<span class="hljs-tag">&lt;/<span class="hljs-name">pattern</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">encoder</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- error级别过滤器 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">filter</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.filter.LevelFilter&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">level</span>&gt;</span>DEBUG<span class="hljs-tag">&lt;/<span class="hljs-name">level</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">onMatch</span>&gt;</span>ACCEPT<span class="hljs-tag">&lt;/<span class="hljs-name">onMatch</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">onMismatch</span>&gt;</span>DENY<span class="hljs-tag">&lt;/<span class="hljs-name">onMismatch</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">filter</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;infoAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">file</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;.log<span class="hljs-tag">&lt;/<span class="hljs-name">file</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">rollingPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">fileNamePattern</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;/$&#123;MODULE_NAME&#125;-%d&#123;yyyy-MM-dd&#125;.%i.log.gz<span class="hljs-tag">&lt;/<span class="hljs-name">fileNamePattern</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">maxHistory</span>&gt;</span>$&#123;MAX_HISTORY&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxHistory</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP&quot;</span>&gt;</span><br>                                <span class="hljs-comment">&lt;!-- or whenever the file size reaches 100MB --&gt;</span><br>                                <span class="hljs-tag">&lt;<span class="hljs-name">maxFileSize</span>&gt;</span>$&#123;MAX_FILE_SIZE&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxFileSize</span>&gt;</span><br>                        <span class="hljs-tag">&lt;/<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">rollingPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">encoder</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">pattern</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;35&#125; %X&#123;traceId&#125; - %msg%n<span class="hljs-tag">&lt;/<span class="hljs-name">pattern</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">encoder</span>&gt;</span><br>                <span class="hljs-comment">&lt;!--&lt;filter class=&quot;ch.qos.logback.classic.filter.LevelFilter&quot;&gt;</span><br><span class="hljs-comment">                        &lt;level&gt;INFO&lt;/level&gt;  </span><br><span class="hljs-comment">                        &lt;onMatch&gt;ACCEPT&lt;/onMatch&gt;  </span><br><span class="hljs-comment">                        &lt;onMismatch&gt;DENY&lt;/onMismatch&gt;</span><br><span class="hljs-comment">                &lt;/filter&gt;--&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;asyncSTDOUT&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.AsyncAppender&quot;</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 默认情况下，当BlockingQueue还有20%容量，他将丢弃TRACE、DEBUG和INFO级别的event，只保留WARN和ERROR级别的event。为了保持所有的events，设置该值为0。 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">discardingThreshold</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">discardingThreshold</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">queueSize</span>&gt;</span>512<span class="hljs-tag">&lt;/<span class="hljs-name">queueSize</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;STDOUT&quot;</span> /&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;asyncErrorAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.AsyncAppender&quot;</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 默认情况下，当BlockingQueue还有20%容量，他将丢弃TRACE、DEBUG和INFO级别的event，只保留WARN和ERROR级别的event。为了保持所有的events，设置该值为0。 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">discardingThreshold</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">discardingThreshold</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">queueSize</span>&gt;</span>512<span class="hljs-tag">&lt;/<span class="hljs-name">queueSize</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;errorAppender&quot;</span> /&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;asyncWarnAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.AsyncAppender&quot;</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 默认情况下，当BlockingQueue还有20%容量，他将丢弃TRACE、DEBUG和INFO级别的event，只保留WARN和ERROR级别的event。为了保持所有的events，设置该值为0。 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">discardingThreshold</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">discardingThreshold</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">queueSize</span>&gt;</span>512<span class="hljs-tag">&lt;/<span class="hljs-name">queueSize</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;warnAppender&quot;</span> /&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;asyncInfoAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.AsyncAppender&quot;</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 默认情况下，当BlockingQueue还有20%容量，他将丢弃TRACE、DEBUG和INFO级别的event，只保留WARN和ERROR级别的event。为了保持所有的events，设置该值为0。 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">discardingThreshold</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">discardingThreshold</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">queueSize</span>&gt;</span>512<span class="hljs-tag">&lt;/<span class="hljs-name">queueSize</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;infoAppender&quot;</span> /&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;asyncDebugAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.AsyncAppender&quot;</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 默认情况下，当BlockingQueue还有20%容量，他将丢弃TRACE、DEBUG和INFO级别的event，只保留WARN和ERROR级别的event。为了保持所有的events，设置该值为0。 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">discardingThreshold</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">discardingThreshold</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">queueSize</span>&gt;</span>512<span class="hljs-tag">&lt;/<span class="hljs-name">queueSize</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;debugAppender&quot;</span> /&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-comment">&lt;!-- 事件构建相关 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">logger</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;cn.com.bsfit.engine.core.retem&quot;</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;INFO&quot;</span> /&gt;</span><br>        <span class="hljs-comment">&lt;!-- 特征加载相关 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">logger</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;cn.com.bsfit.engine.core.load&quot;</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;INFO&quot;</span> /&gt;</span><br>        <span class="hljs-comment">&lt;!-- 规则执行相关 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">logger</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;cn.com.bsfit.engine.core.exec&quot;</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;INFO&quot;</span> /&gt;</span><br>        <span class="hljs-comment">&lt;!-- 模型执行相关 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">logger</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;cn.com.bsfit.engine.core.model&quot;</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;INFO&quot;</span> /&gt;</span><br>        <span class="hljs-comment">&lt;!-- 事件下发相关 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">logger</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;cn.com.bsfit.engine.core.mgr&quot;</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;INFO&quot;</span> /&gt;</span><br>        <span class="hljs-comment">&lt;!-- rest接口可以打印接收到的原始报文日志 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">logger</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;cn.com.bsfit.engine.core.web&quot;</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;INFO&quot;</span> /&gt;</span><br>        <span class="hljs-comment">&lt;!-- 流立方客户端查询相关 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">logger</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;cn.com.bsfit.sc.client.command&quot;</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;INFO&quot;</span> /&gt;</span><br><br>        <span class="hljs-comment">&lt;!-- 根，所有logger的祖先 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">root</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;INFO&quot;</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;asyncSTDOUT&quot;</span> /&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;asyncErrorAppender&quot;</span> /&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;asyncWarnAppender&quot;</span> /&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;asyncInfoAppender&quot;</span> /&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;asyncDebugAppender&quot;</span> /&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">root</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">configuration</span>&gt;</span><br></code></pre></td></tr></table></figure></li>
+<li>logback.xml—-&gt;mgr<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">configuration</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- 日志最大的历史 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;MAX_HISTORY&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;30&quot;</span>/&gt;</span><br>        <span class="hljs-comment">&lt;!-- 组件名称 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;MODULE_NAME&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;mgr&quot;</span>/&gt;</span><br>        <span class="hljs-comment">&lt;!-- 日志文件目录 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;DIR&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;logs&quot;</span>/&gt;</span><br>        <span class="hljs-comment">&lt;!-- 日志文件大小上限 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;MAX_FILE_SIZE&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;100MB&quot;</span>/&gt;</span><br><br>        <span class="hljs-comment">&lt;!-- 开启JMX管理日志 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">jmxConfigurator</span> /&gt;</span><br>        <span class="hljs-comment">&lt;!-- 输出到控制台 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;STDOUT&quot;</span></span><br><span class="hljs-tag">                <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.ConsoleAppender&quot;</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">encoder</span>&gt;</span><br>                        <span class="hljs-comment">&lt;!-- 输出格式 --&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">pattern</span>&gt;</span><br>                                %d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;36&#125; %X&#123;traceId&#125; - %msg%n<br>                        <span class="hljs-tag">&lt;/<span class="hljs-name">pattern</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">encoder</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-comment">&lt;!-- error级别单独记录 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;errorAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">file</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;-error.log<span class="hljs-tag">&lt;/<span class="hljs-name">file</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 以day为单位自动回滚 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">rollingPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">fileNamePattern</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;-error/$&#123;MODULE_NAME&#125;-error-%d&#123;yyyy-MM-dd&#125;.%i.log.gz<span class="hljs-tag">&lt;/<span class="hljs-name">fileNamePattern</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">maxHistory</span>&gt;</span>$&#123;MAX_HISTORY&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxHistory</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP&quot;</span>&gt;</span><br>                        <span class="hljs-comment">&lt;!-- or whenever the file size reaches 100MB --&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">maxFileSize</span>&gt;</span>$&#123;MAX_FILE_SIZE&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxFileSize</span>&gt;</span><br>                    <span class="hljs-tag">&lt;/<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">rollingPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">encoder</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">pattern</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;35&#125; %X&#123;traceId&#125; - %msg%n<span class="hljs-tag">&lt;/<span class="hljs-name">pattern</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">encoder</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- error级别过滤器 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">filter</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.filter.LevelFilter&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">level</span>&gt;</span>ERROR<span class="hljs-tag">&lt;/<span class="hljs-name">level</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">onMatch</span>&gt;</span>ACCEPT<span class="hljs-tag">&lt;/<span class="hljs-name">onMatch</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">onMismatch</span>&gt;</span>DENY<span class="hljs-tag">&lt;/<span class="hljs-name">onMismatch</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">filter</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-comment">&lt;!-- warn级别单独记录 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;warnAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">file</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;-warn.log<span class="hljs-tag">&lt;/<span class="hljs-name">file</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 以day为单位自动回滚 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">rollingPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">fileNamePattern</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;-warn/$&#123;MODULE_NAME&#125;-warn-%d&#123;yyyy-MM-dd&#125;.%i.log.gz<span class="hljs-tag">&lt;/<span class="hljs-name">fileNamePattern</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">maxHistory</span>&gt;</span>$&#123;MAX_HISTORY&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxHistory</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP&quot;</span>&gt;</span><br>                        <span class="hljs-comment">&lt;!-- or whenever the file size reaches 100MB --&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">maxFileSize</span>&gt;</span>$&#123;MAX_FILE_SIZE&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxFileSize</span>&gt;</span><br>                    <span class="hljs-tag">&lt;/<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">rollingPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">encoder</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">pattern</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;35&#125; %X&#123;traceId&#125; - %msg%n<span class="hljs-tag">&lt;/<span class="hljs-name">pattern</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">encoder</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- error级别过滤器 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">filter</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.filter.LevelFilter&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">level</span>&gt;</span>WARN<span class="hljs-tag">&lt;/<span class="hljs-name">level</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">onMatch</span>&gt;</span>ACCEPT<span class="hljs-tag">&lt;/<span class="hljs-name">onMatch</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">onMismatch</span>&gt;</span>DENY<span class="hljs-tag">&lt;/<span class="hljs-name">onMismatch</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">filter</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;infoAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">file</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;.log<span class="hljs-tag">&lt;/<span class="hljs-name">file</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">rollingPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">fileNamePattern</span>&gt;</span>$&#123;DIR&#125;/$&#123;MODULE_NAME&#125;/$&#123;MODULE_NAME&#125;-%d&#123;yyyy-MM-dd&#125;.%i.log.gz<span class="hljs-tag">&lt;/<span class="hljs-name">fileNamePattern</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">maxHistory</span>&gt;</span>$&#123;MAX_HISTORY&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxHistory</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP&quot;</span>&gt;</span><br>                        <span class="hljs-comment">&lt;!-- or whenever the file size reaches 100MB --&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">maxFileSize</span>&gt;</span>$&#123;MAX_FILE_SIZE&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">maxFileSize</span>&gt;</span><br>                    <span class="hljs-tag">&lt;/<span class="hljs-name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">rollingPolicy</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">encoder</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">pattern</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%thread] %-5level %logger&#123;35&#125; %X&#123;traceId&#125; - %msg%n<span class="hljs-tag">&lt;/<span class="hljs-name">pattern</span>&gt;</span><br>                <span class="hljs-tag">&lt;/<span class="hljs-name">encoder</span>&gt;</span><br>                <span class="hljs-comment">&lt;!--&lt;filter class=&quot;ch.qos.logback.classic.filter.LevelFilter&quot;&gt;</span><br><span class="hljs-comment">                        &lt;level&gt;INFO&lt;/level&gt;  </span><br><span class="hljs-comment">                        &lt;onMatch&gt;ACCEPT&lt;/onMatch&gt;  </span><br><span class="hljs-comment">                        &lt;onMismatch&gt;DENY&lt;/onMismatch&gt;</span><br><span class="hljs-comment">                &lt;/filter&gt;--&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;ASYNCSTDOUT&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.AsyncAppender&quot;</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 默认情况下，当BlockingQueue还有20%容量，他将丢弃TRACE、DEBUG和INFO级别的event，只保留WARN和ERROR级别的event。为了保持所有的events，设置该值为0。 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">discardingThreshold</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">discardingThreshold</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">queueSize</span>&gt;</span>512<span class="hljs-tag">&lt;/<span class="hljs-name">queueSize</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;STDOUT&quot;</span> /&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;ASYNCerrorAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.AsyncAppender&quot;</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 默认情况下，当BlockingQueue还有20%容量，他将丢弃TRACE、DEBUG和INFO级别的event，只保留WARN和ERROR级别的event。为了保持所有的events，设置该值为0。 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">discardingThreshold</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">discardingThreshold</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">queueSize</span>&gt;</span>512<span class="hljs-tag">&lt;/<span class="hljs-name">queueSize</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;errorAppender&quot;</span> /&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;ASYNCwarnAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.AsyncAppender&quot;</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 默认情况下，当BlockingQueue还有20%容量，他将丢弃TRACE、DEBUG和INFO级别的event，只保留WARN和ERROR级别的event。为了保持所有的events，设置该值为0。 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">discardingThreshold</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">discardingThreshold</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">queueSize</span>&gt;</span>512<span class="hljs-tag">&lt;/<span class="hljs-name">queueSize</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;warnAppender&quot;</span> /&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;ASYNCinfoAppender&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;ch.qos.logback.classic.AsyncAppender&quot;</span>&gt;</span><br>                <span class="hljs-comment">&lt;!-- 默认情况下，当BlockingQueue还有20%容量，他将丢弃TRACE、DEBUG和INFO级别的event，只保留WARN和ERROR级别的event。为了保持所有的events，设置该值为0。 --&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">discardingThreshold</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">discardingThreshold</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">queueSize</span>&gt;</span>512<span class="hljs-tag">&lt;/<span class="hljs-name">queueSize</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;infoAppender&quot;</span> /&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">appender</span>&gt;</span><br><span class="hljs-comment">&lt;!--    &lt;logger name=&quot;com.netflix&quot; level=&quot;INFO&quot;/&gt;--&gt;</span><br><span class="hljs-comment">&lt;!--    &lt;logger name=&quot;cn.com.bsfit.frms.engine&quot; level=&quot;INFO&quot;/&gt;--&gt;</span><br><span class="hljs-comment">&lt;!--    &lt;logger name=&quot;cn.com.bsfit.frms.pay.engine.loader.mob&quot; level=&quot;INFO&quot;/&gt;   --&gt;</span><br>        <span class="hljs-comment">&lt;!-- 根，所有logger的祖先 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">root</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;INFO&quot;</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;ASYNCSTDOUT&quot;</span> /&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;ASYNCerrorAppender&quot;</span> /&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;ASYNCwarnAppender&quot;</span> /&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">appender-ref</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;ASYNCinfoAppender&quot;</span> /&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">root</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">configuration</span>&gt;</span><br></code></pre></td></tr></table></figure></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%BF%90%E7%BB%B4/" class="category-chain-item">运维</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%A7%84%E8%8C%83/" class="print-no-link">#规范</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>日志规范</div>
+      <div>https://vegetablest.github.io/2021/02/19/日志规范/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>af su</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年2月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/03/21/git%E4%BD%BF%E7%94%A8/" title="Git使用">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Git使用</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/09/23/%E7%AE%80%E5%8D%95%E8%81%8A%E8%81%8A%E7%BC%93%E5%AD%98/" title="简单聊聊缓存">
+                        <span class="hidden-mobile">简单聊聊缓存</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
